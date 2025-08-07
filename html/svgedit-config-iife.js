@@ -17387,6 +17387,10 @@
       // TODO(codedread): Figure out why after the Closure compiler, the window mouseup is ignored.
 
 
+      container.onauxclick = (e) => {
+        e.preventDefault(); // Do not open links with the mouse wheel button
+      };
+
       $$9(container).mousedown(mouseDown).mousemove(mouseMove).click(handleLinkInCanvas).dblclick(dblClick).mouseup(mouseUp); // $(window).mouseup(mouseUp);
       // TODO(rafaelcastrocouto): User preference for shift key and zoom factor
 
@@ -17398,7 +17402,7 @@
        * @returns {void}
        */
       function (e) {
-        if (!(e.shiftKey || e.ctrlKey)) { // Review: Added Ctrl to wheel zoom
+        if (!(e.shiftKey || e.ctrlKey || window.panning)) { // Review: Added Ctrl to wheel zoom
           return;
         }
 
@@ -33607,10 +33611,10 @@
       var wArea = workarea[0];
       var lastX = null,
           lastY = null,
-          panning = false,
           keypan = false;
+          window.panning = false;
       $$b('#svgcanvas').bind('mousemove mouseup', function (evt) {
-        if (panning === false) {
+        if (window.panning === false) {
           return true;
         }
 
@@ -33620,13 +33624,13 @@
         lastY = evt.clientY;
 
         if (evt.type === 'mouseup') {
-          panning = false;
+          window.panning = false;
         }
 
         return false;
       }).mousedown(function (evt) {
         if (evt.button === 1 || keypan === true) {
-          panning = true;
+          window.panning = true;
           lastX = evt.clientX;
           lastY = evt.clientY;
           return false;
@@ -33635,7 +33639,7 @@
         return true;
       });
       $$b(window).mouseup(function () {
-        panning = false;
+        window.panning = false;
       });
       $$b(document).bind('keydown', 'space', function (evt) {
         svgCanvas.spaceKey = keypan = true;

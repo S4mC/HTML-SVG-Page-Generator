@@ -1,6 +1,7 @@
-# nuitka --msvc=latest --onefile --windows-console-mode=disable --windows-icon-from-ico=icon.ico "Better html EdrawMax.py"
+# nuitka --msvc=latest --onefile --windows-console-mode=disable --windows-icon-from-ico=icon.ico "main.py"
+# Parece que tengo que configurar algun parametro mas en nuitka para que compile correctamente el svg editor
 
-# Todo: add comments
+# Todo: Hacer que se pueda crear nuevas página y quitar actuales, además de que documentos vacios
 
 import webview
 import os
