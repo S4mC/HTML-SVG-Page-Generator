@@ -1,7 +1,8 @@
 # nuitka --msvc=latest --onefile --windows-console-mode=disable --windows-icon-from-ico=icon.ico "main.py"
 # Parece que tengo que configurar algun parametro mas en nuitka para que compile correctamente el svg editor
 
-# Todo: Hacer que se pueda crear nuevas página y quitar actuales, además de que documentos vacios
+# Todo: Hacer que se pueda crear nuevas página y quitar actuales, además de que documentos vacios (talvez en lugar de vacios permitir añadir archivos svg)
+# Todo: Hacer que se puedan importar páginas en formato svg y borrar actuales
 
 import webview
 import os
@@ -15,8 +16,9 @@ from SVGEditor import SVGEditor
 
 class HTMLpreview:
     # Allows to use a function from the HTMLEditor class that calls HTMLpreview as an API.
-    def __init__(self, open_preview_window_editor):
+    def __init__(self, open_preview_window_editor, update_html_content_preview):
         self.open_preview_window_editor = open_preview_window_editor
+        self.update_html_content_preview = update_html_content_preview
 
 class HTMLEditor:
     # Api of the main window
@@ -230,6 +232,86 @@ class HTMLEditor:
                 else "Sin archivo"
             ),
         }
+    
+    def update_html_content_preview(self):
+        # Update preview
+        self.html_content = self.window_preview.evaluate_js("""
+            // Obtain the full content of the html and delete width="null" and height="null"
+            let fullHTML = document.documentElement.outerHTML;
+            fullHTML = fullHTML.replace(/\s(width|height)="null"/g, '');
+        """)
+        
+        # Save in html_content the correct value of width and height
+        self.html_content = self.html_content.replace('widthO="','width="').replace('heightO="','height="')
+        
+        # Update preview
+        window.dispatch_custom_event("updateContent", {"content": self.html_content})
+    
+    def refresh_preview_svg_icon(self, anchoDeseado):
+        """Function that updates the preview of the passed SVG icon. window.final_svg_edit must have a copy of the SVG to create the icon preview. Both the SVG with the same ID as the copy and the nav thumb child must exist."""
+        
+        self.window_preview.evaluate_js(f'''
+            const targetWidth = {anchoDeseado};
+            
+            // 1. Obtener y validar elemento SVG
+            const svgElement = window.final_svg_edit;
+            window.final_svg_edit = null;
+            const elementID = svgElement.id;
+            const svgElementNew = document.getElementById(elementID);
+            
+            // 2. Calcular dimensiones
+            const bbox = svgElementNew.getBBox();
+            const targetHeight = Math.round(targetWidth * (bbox.height / bbox.width));
+            
+            // 3. Serializar y preparar SVG
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(svgElement);
+            
+            if (!svgString.includes("xmlns")) {{
+                svgString = svgString.replace(/<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+            }}
+            
+            // 4. Crear data URI (método más confiable)
+            const svgDataURI = "data:image/svg+xml," + encodeURIComponent(svgString);
+            
+            // 5. Convertir usando imagen temporal
+            const img = new Image();
+            
+            img.onload = function() {{
+                // Crear canvas y contexto
+                const canvas = document.createElement("canvas");
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext("2d");
+                
+                // Configurar calidad
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
+                
+                // Dibujar y convertir
+                ctx.clearRect(0, 0, targetWidth, targetHeight);
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                const pngBase64 = canvas.toDataURL("image/png");
+                
+                // 6. Actualizar miniatura
+                const pageNum = parseInt(elementID.replace("page", ""));
+                const navThumbs = document.getElementById("nav-thumbs");
+                const parentDiv = navThumbs.children[pageNum - 1];
+                const imgElement = parentDiv.querySelector("img");
+                
+                if (imgElement) {{
+                    imgElement.src = pngBase64;
+                    
+                    // Callback a Python
+                    if (pywebview?.api?.update_html_content_preview) {{
+                        pywebview.api.update_html_content_preview();
+                    }}
+                }}
+            }};
+            
+            img.onerror = (e) => console.error("❌ Error cargando SVG:", e);
+            img.src = svgDataURI;
+        ''')
 
     def open_preview_window_editor(self, SVGHtml, id_el_preview):
         """Opens the preview of the current html_content"""
@@ -248,7 +330,7 @@ class HTMLEditor:
             number_ID_container = id_el_preview.replace("page","")
             
             # Refresh Html visor content
-            self.html_content = self.window_preview.evaluate_js(f'''
+            self.window_preview.evaluate_js(f'''
                 let page_var = document.getElementById("{id_el_preview}");
 
                 // Save all attributes of the original SVG
@@ -288,6 +370,8 @@ class HTMLEditor:
                     parent.removeChild(layer);
                 }});
                 
+                window.final_svg_edit = page_var_edited.cloneNode(true);
+                
                 if (window.actual_viewport) {{
                     // Refresh the SVG zoomContainer
                     window.zoomContainer{number_ID_container} = svgPanZoom("#page{number_ID_container}");
@@ -295,17 +379,9 @@ class HTMLEditor:
                 
                 // Allow editing again
                 page_var_edited.addEventListener('contextmenu', handleRightClickPreview);
-                
-                // Obtain the full content of the html and delete width="null" and height="null"
-                let fullHTML = document.documentElement.outerHTML;
-                fullHTML = fullHTML.replace(/\s(width|height)="null"/g, '');
             ''')
             
-            # Save in html_content the correct value of width and height
-            self.html_content = self.html_content.replace('widthO="','width="').replace('heightO="','height="')
-            
-            # Update preview
-            window.dispatch_custom_event("updateContent", {"content": self.html_content})
+            self.refresh_preview_svg_icon(150)
             
         # Open editor
         self.window_edit = SVGEditor(SVGHtml, private_mode=True, callback_funct=callback_funct, start_main = False)
@@ -321,7 +397,7 @@ class HTMLEditor:
                 self.window_preview.destroy()
         
         # Creates an instance of HTMLpreview for use in the api of preview
-        self.window_preview_api = HTMLpreview(self.open_preview_window_editor)
+        self.window_preview_api = HTMLpreview(self.open_preview_window_editor, self.update_html_content_preview)
         
         if (not "svgs[i].setAttribute('widthO', oriWidth);" in svg_editr):
             # This creates a widthO and heightO attribute in SVG to save the original width and height
@@ -396,8 +472,85 @@ class HTMLEditor:
             // Function to be executed when right-clicking on any SVG
             function handleRightClickPreview(event) {
                 event.preventDefault();
-                let svgHtml = limpiarAtributosDuplicados(this.outerHTML);
-                pywebview.api.open_preview_window_editor(svgHtml, this.id);
+
+                // Eliminar cualquier menú anterior
+                document.querySelectorAll(".context-menu-temp").forEach(menu => menu.remove());
+
+                // Crear estilos desde JS
+                const style = document.createElement("style");
+                style.textContent = `
+                    .context-menu-temp {
+                        position: absolute;
+                        background: #222;
+                        color: white;
+                        border-radius: 6px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+                        padding: 5px 0;
+                        font-family: sans-serif;
+                        min-width: 150px;
+                        z-index: 9999;
+                    }
+                    .context-menu-temp div {
+                        padding: 8px 12px;
+                        cursor: pointer;
+                    }
+                    .context-menu-temp div:hover {
+                        background: #444;
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Crear el contenedor del menú
+                const menu = document.createElement("div");
+                menu.className = "context-menu-temp";
+
+                // Crear opciones
+                const option1 = document.createElement("div");
+                option1.textContent = "Editar SVG";
+                option1.onclick = () => {
+                    menu.remove();
+                    style.remove();
+                    let svgHtml = limpiarAtributosDuplicados(this.outerHTML);
+                    pywebview.api.open_preview_window_editor(svgHtml, this.id);
+                };
+
+                const option2 = document.createElement("div");
+                option2.textContent = "Opción 2";
+                option2.onclick = () => {
+                    alert("Elegiste Opción 2");
+                    menu.remove();
+                    style.remove();
+                };
+
+                menu.appendChild(option1);
+                menu.appendChild(option2);
+
+                // Posicionar menú
+                menu.style.left = `${event.pageX}px`;
+                menu.style.top = `${event.pageY}px`;
+
+                document.body.appendChild(menu);
+
+                // Cerrar si se hace clic fuera o se presiona Escape
+                const closeMenu = () => {
+                    menu.remove();
+                    style.remove();
+                    document.removeEventListener("click", outsideClick);
+                    document.removeEventListener("keydown", escClose);
+                };
+
+                const outsideClick = e => {
+                    if (!menu.contains(e.target)) closeMenu();
+                };
+
+                const escClose = e => {
+                    if (e.key === "Escape") closeMenu();
+                };
+
+                setTimeout(() => {
+                    document.addEventListener("click", outsideClick);
+                    document.addEventListener("keydown", escClose);
+                }, 0);
             }
 
             // Find and assign events to elements
