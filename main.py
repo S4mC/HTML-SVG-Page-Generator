@@ -1,34 +1,34 @@
 # nuitka --msvc=latest --onefile --windows-console-mode=disable --windows-icon-from-ico=icon.ico "main.py"
 # Parece que tengo que configurar algun parametro mas en nuitka para que compile correctamente el svg editor
 
-# Todo: Hacer que se pueda crear nuevas página y quitar actuales, además de que documentos vacios (talvez en lugar de vacios permitir añadir archivos svg)
-# Todo: Hacer que se puedan importar páginas en formato svg y borrar actuales
+# Todo: Hacer que los iconos tengan dentro imagenes con los colores mas vivos y bordes mas grandes (se vean mejor)
+# Todo: quitar is_better variable porque siempre ahora es better
 
 import webview
 import os
 import re
 import json
-from pathlib import Path
 
-from const import var_better_html, html_interface
+from const import var_better_html, html_interface, style_added_page, html_content_default, svg_page_default
 from SVGEditor import SVGEditor
 
 
 class HTMLpreview:
     # Allows to use a function from the HTMLEditor class that calls HTMLpreview as an API.
-    def __init__(self, open_preview_window_editor, update_html_content_preview, add_new_SVG, refresh_svg_icon, delete_this_SVG):
+    def __init__(self, open_preview_window_editor, update_html_content, add_new_SVG, refresh_svg_icon, delete_this_SVG, reorder_SVGs):
         self.open_preview_window_editor = open_preview_window_editor
-        self.update_html_content_preview = update_html_content_preview
+        self.update_html_content = update_html_content
         self.add_new_SVG = add_new_SVG
         self.refresh_svg_icon = refresh_svg_icon
         self.delete_this_SVG = delete_this_SVG
+        self.reorder_SVGs = reorder_SVGs
 
 
 class HTMLEditor:
     # Api of the main window
     def __init__(self):
         self.current_file = None
-        self.html_content = ""
+        self.html_content = html_content_default
         self.var_better_html = var_better_html
         self.window_preview = None
         self.window_preview_api = None
@@ -136,13 +136,18 @@ class HTMLEditor:
             </div>"""
     
     def do_better_html(self):
+        if ('<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"' in self.html_content):
+            print("Ya esta mejorado")
+            return {
+                "success": True,
+                "content": self.html_content,
+            }
         # Add device scale
         self.replace_text(
             '<meta charset="utf-8"',
             '<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"',
         )
-        self.replace_text('xlink:href="#', 'class="scroll-link" xlink:href="#')
-        self.replace_text('<a href="#page', '<a class="scroll-link" href="#page')
+        self.replace_text("</head>", style_added_page + "</head>")
 
         # Add SVG viewer foreach svg
         svg_pattern = r"<svg[^>]*>.*?</svg>"
@@ -277,6 +282,8 @@ class HTMLEditor:
 
             if (svgElement) {{
                 try {{
+                    window.final_svg_edit = null;
+                    
                     // Obtener elemento y calcular dimensiones
                     const elementID = svgElement.id;
                     const svgElementNew = document.getElementById(elementID);
@@ -375,8 +382,8 @@ class HTMLEditor:
                             imgElement.src = pngBase64;
                             
                             // Callback a Python
-                            if (pywebview?.api?.update_html_content_preview) {{
-                                pywebview.api.update_html_content_preview();
+                            if (pywebview?.api?.update_html_content) {{
+                                pywebview.api.update_html_content();
                             }}
                         }}
                     }};
@@ -479,7 +486,7 @@ class HTMLEditor:
             };icon_list""")
         return (pages, icons)
     
-    def set_SVG_pages_dicts(self, svg_dict, icons_dict, is_better, svg_to_refresh_icon_id):
+    def set_SVG_pages_dicts(self, svg_dict, icons_dict, is_better, svg_to_refresh_icon_id, page_name = None, svg_page_to_go = None):
         if (is_better):
             for item_page_id, item_page_content in svg_dict.items():
                 svg_dict[item_page_id] = self.get_svg_wraper(item_page_content, int(item_page_id.replace("page", "")))
@@ -545,6 +552,7 @@ class HTMLEditor:
             setupPageElementsPreview();
         """)
         
+        # icons
         self.window_preview.evaluate_js(f"""
             let icon_dict = {icons_dict_json};
             let iconContainer = document.getElementById("nav-thumbs");
@@ -555,59 +563,84 @@ class HTMLEditor:
                 temp.innerHTML = iconHTML.trim().replace(' selected"','"');
                 let containerElement = temp.firstChild;
                 containerElement.querySelector(".pagenum").textContent = id;
-                (containerElement.querySelector(".scroll-link") || containerElement.querySelector("div > a")).setAttribute("href", "#page" + id);
+                containerElement.querySelector("div > a").setAttribute("href", "#page" + id);
+                if (id == "{svg_to_refresh_icon_id.replace('page', '')}") {{
+                    containerElement.querySelector("p").textContent = {'"' + page_name + '"' if page_name else "'page'+" + "id"
+};
+                }}
                 iconContainer.appendChild(containerElement);
             }}
+            makeElementsEditable();
         """)
+        
         
         self.refresh_svg_icon()
         self.window_preview.dispatch_custom_event("load")
         self.update_html_content()
+        
+        if (svg_page_to_go):
+            self.window_preview.evaluate_js(f"""document.getElementById('{svg_page_to_go}').scrollIntoView({{
+                behavior: 'smooth',  // desplazamiento suave
+                block: 'center'      // lo centra en la pantalla
+            }});""")
 
-    def add_new_SVG(self, id_clicked, before_page = None, after_page = None, is_better = False):
+    def add_new_SVG(self, id_clicked, before_page = None, after_page = None, is_better = False, default_page = False):
         """Open and add a new svg file to the preview"""
-        result = self.window_preview.create_file_dialog(
-            webview.OPEN_DIALOG,
-            directory=os.getcwd(),
-            file_types=("Archivos SVG (*.svg)", "Todos los archivos (*.*)")
-        )
+        result = None
+        if (not default_page):
+            result = self.window_preview.create_file_dialog(
+                webview.OPEN_DIALOG,
+                directory=os.getcwd(),
+                file_types=("Archivos SVG (*.svg)", "Todos los archivos (*.*)")
+            )
 
-        if result and len(result) > 0:
-            file_path = result[0]
-            try:
+        try:
+            svg_content = None
+            file_path = None
+            
+            if result and len(result) > 0:
+                file_path = result[0]
                 with open(file_path, "r", encoding="utf-8") as f:
                     svg_content = f.read()
-                    
-                    (svg_dict, icons_dict) = self.get_SVG_pages_dicts()
-                    
-                    id_clicked_number_page = int(id_clicked.replace("page",""))
-                    
-                    svg_added_id = f"page{id_clicked_number_page}"
-                    
-                    if (before_page):
-                        page_act = len(svg_dict)
-                        while (page_act > id_clicked_number_page - 1):
-                            svg_dict[f"page{page_act + 1}"] = svg_dict[f"page{page_act}"]
-                            icons_dict[str(page_act + 1)] = icons_dict[str(page_act)]
-                            page_act-=1
-                        svg_dict[svg_added_id] = svg_content
-                    
-                    if (after_page):
-                        page_act = len(svg_dict)
-                        svg_added_id = f"page{id_clicked_number_page + 1}"
-                        while (page_act > id_clicked_number_page):
-                            svg_dict[f"page{page_act + 1}"] = svg_dict[f"page{page_act}"]
-                            icons_dict[str(page_act + 1)] = icons_dict[str(page_act)]
-                            page_act-=1
-                        svg_dict[svg_added_id] = svg_content
-                        # For when only exist one page this resolve the problem
-                        icons_dict[str(id_clicked_number_page + 1)] = icons_dict["1"]
+            
+            if default_page:
+                svg_content = svg_page_default
+            
+            if svg_content:
+                (svg_dict, icons_dict) = self.get_SVG_pages_dicts()
+                
+                id_clicked_number_page = int(id_clicked.replace("page",""))
+                
+                svg_added_id = f"page{id_clicked_number_page}"
+                
+                if (before_page):
+                    page_act = len(svg_dict)
+                    while (page_act > id_clicked_number_page - 1):
+                        svg_dict[f"page{page_act + 1}"] = svg_dict[f"page{page_act}"]
+                        icons_dict[str(page_act + 1)] = icons_dict[str(page_act)]
+                        page_act-=1
+                    svg_dict[svg_added_id] = svg_content
+                
+                if (after_page):
+                    page_act = len(svg_dict)
+                    svg_added_id = f"page{id_clicked_number_page + 1}"
+                    while (page_act > id_clicked_number_page):
+                        svg_dict[f"page{page_act + 1}"] = svg_dict[f"page{page_act}"]
+                        icons_dict[str(page_act + 1)] = icons_dict[str(page_act)]
+                        page_act-=1
+                    svg_dict[svg_added_id] = svg_content
+                    # For when only exist one page this resolve the problem
+                    icons_dict[str(id_clicked_number_page + 1)] = icons_dict["1"]
 
-                    self.set_SVG_pages_dicts(svg_dict, icons_dict, is_better, svg_added_id)
-                    
-                    return {"success": True}
-            except Exception as e:
-                return {"success": False, "error": str(e)}
+                file_name_no_ext = None
+                # Nombre de archivo sin extensión
+                if (not default_page):
+                    file_name_no_ext, _ = os.path.splitext(os.path.basename(file_path) )
+                self.set_SVG_pages_dicts(svg_dict, icons_dict, is_better, svg_added_id, file_name_no_ext, svg_page_to_go=svg_added_id)
+                
+                return {"success": True}  
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     
     def delete_this_SVG(self, id_clicked, is_better):
         (svg_dict, icons_dict) = self.get_SVG_pages_dicts()
@@ -627,6 +660,18 @@ class HTMLEditor:
         del svg_dict[f"page{page_fin}"]
         del icons_dict[str(page_fin)]
         self.set_SVG_pages_dicts(svg_dict, icons_dict, is_better, "none")
+        
+    def reorder_SVGs(self, new_order, is_better, numer_clicked):
+        (svg_dict, icons_dict) = self.get_SVG_pages_dicts()
+        
+        svg_new_dict = {}
+        page_act=1
+
+        for page_number in new_order:
+            svg_new_dict[f"page{page_act}"] = svg_dict[f"page{page_number}"]
+            page_act+=1
+
+        self.set_SVG_pages_dicts(svg_new_dict, icons_dict, is_better, "none", svg_page_to_go=f"page{numer_clicked}")
 
     def open_preview_window(self, svg_editr):
         if self.window_preview:
@@ -642,7 +687,7 @@ class HTMLEditor:
 
         # Creates an instance of HTMLpreview for use in the api of preview
         self.window_preview_api = HTMLpreview(
-            self.open_preview_window_editor, self.update_html_content, self.add_new_SVG, self.refresh_svg_icon, self.delete_this_SVG
+            self.open_preview_window_editor, self.update_html_content, self.add_new_SVG, self.refresh_svg_icon, self.delete_this_SVG, self.reorder_SVGs
         )
 
         if not "svgs[i].setAttribute('width-o', oriWidth);" in svg_editr:
@@ -730,6 +775,254 @@ class HTMLEditor:
                 return svgEl.outerHTML;
             }
             
+            // Función para hacer elementos editables con doble clic
+            function makeElementsEditable() {
+                // Seleccionar todos los elementos que coincidan con el patrón
+                const elements = document.querySelectorAll("#nav-thumbs > div > p");
+                
+                elements.forEach(element => {
+                    // Agregar event listener para doble clic
+                    element.addEventListener('dblclick', function(e) {
+                        e.preventDefault();
+                        startEditing(this);
+                    });
+                    
+                    // Opcional: agregar cursor pointer para indicar que es editable
+                    element.style.cursor = 'pointer';
+                    element.title = 'Doble clic para editar';
+                });
+            }
+
+            function startEditing(element) {
+                // Verificar si ya está siendo editado
+                if (element.querySelector('.edit-input')) {
+                    return;
+                }
+                
+                // Obtener el texto actual
+                const currentText = element.textContent;
+                
+                // Crear el input de edición
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentText;
+                input.className = 'edit-input';
+                
+                // Estilos para el input
+                input.style.cssText = `
+                    width: 100%;
+                    padding: 2px 4px;
+                    border-radius: 3px;
+                    font-family: inherit;
+                    font-size: inherit;
+                    background: white;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                    outline: none;
+                `;
+                
+                // Ocultar el texto original temporalmente
+                const originalDisplay = element.style.display;
+                element.style.position = 'relative';
+                
+                // Guardar el contenido original y limpiarlo
+                const originalContent = element.innerHTML;
+                element.innerHTML = '';
+                element.appendChild(input);
+                
+                // Enfocar y seleccionar todo el texto
+                input.focus();
+                input.select();
+                
+                // Función para confirmar los cambios
+                function confirmEdit() {
+                    const newText = input.value.trim();
+                    element.innerHTML = originalContent;
+                    if (newText && newText !== currentText) {
+                        element.textContent = newText;
+                    }
+                    element.style.display = originalDisplay;
+                    
+                    // Save the changues
+                    pywebview.api.update_html_content();
+                }
+                
+                // Función para cancelar los cambios
+                function cancelEdit() {
+                    element.innerHTML = originalContent;
+                    element.style.display = originalDisplay;
+                }
+                
+                // Event listeners para el input
+                input.addEventListener('keydown', function(e) {
+                    e.stopPropagation();
+                    
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        confirmEdit();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        cancelEdit();
+                    }
+                });
+                
+                // Confirmar al perder el foco (opcional)
+                input.addEventListener('blur', function(e) {
+                    // Pequeño delay para permitir que otros eventos se procesen primero
+                    setTimeout(() => {
+                        if (element.querySelector('.edit-input')) {
+                            confirmEdit();
+                        }
+                    }, 100);
+                });
+                
+                // Prevenir que el clic en el input active otros eventos
+                input.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            
+            // Funciones que permiten cambiar orden de los SVG
+            let draggedElementNavThumb = null;
+            let originalOrderNavThumb = [];
+
+            function initDragRepositionNavThumb() {
+                const container = document.getElementById('nav-thumbs');
+                if (!container) return;
+
+                // Inicializar índices automáticamente
+                initializeOriginalIndices();
+                
+                // Guardar orden inicial
+                saveOriginalOrderNavThumb();
+
+                container.addEventListener('mousedown', (e) => {
+                    // Buscar el elemento nav-thumb más cercano hacia arriba
+                    const navThumbElement = e.target.closest('.nav-thumb');
+                    if (navThumbElement) {
+                        // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+                        resetOriginalIndices();
+                        // Actualizar el orden original para futuras comparaciones
+                        originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+                        // Activar draggable solo al presionar mouse
+                        navThumbElement.draggable = true;
+                    }
+                });
+
+                container.addEventListener('dragstart', (e) => {
+                    // Buscar el elemento nav-thumb más cercano hacia arriba
+                    const navThumbElement = e.target.closest('.nav-thumb');
+                    if (navThumbElement) {
+                        draggedElementNavThumb = navThumbElement;
+                        navThumbElement.classList.add('dragging');
+                    }
+                });
+
+                container.addEventListener('dragend', (e) => {
+                    // Buscar el elemento nav-thumb más cercano hacia arriba
+                    const navThumbElement = e.target.closest('.nav-thumb');
+                    if (navThumbElement) {
+                        navThumbElement.classList.remove('dragging');
+                        // Desactivar draggable al terminar
+                        navThumbElement.removeAttribute("draggable");
+                        checkPositionChangeNavThumb();
+                        draggedElementNavThumb = null;
+                    }
+                });
+
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElementNavThumb(container, e.clientY);
+                    if (!draggedElementNavThumb) { return; }
+                    if (afterElement == null) {
+                        container.appendChild(draggedElementNavThumb);
+                    } else {
+                        container.insertBefore(draggedElementNavThumb, afterElement);
+                    }
+                });
+            }
+
+            function saveOriginalOrderNavThumb() {
+                const container = document.getElementById('nav-thumbs');
+                // Crear orden secuencial [1, 2, 3, 4, 5...]
+                originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+            }
+
+            function getDragAfterElementNavThumb(container, y) {
+                const draggableElements = [...container.querySelectorAll('.nav-thumb:not(.dragging)')];
+                
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            function checkPositionChangeNavThumb() {
+                const container = document.getElementById('nav-thumbs');
+                
+                // Crear array numérico basado en los data-original-index de los elementos en su orden actual
+                const currentOrder = Array.from(container.children).map(child => {
+                    return parseInt(child.dataset.originalIndex);
+                });
+
+                const hasChanged = !arraysEqual(originalOrderNavThumb, currentOrder);
+                
+                if (hasChanged) {
+                    console.log('Reposicionamiento completado - Posición cambiada:', {
+                        ordenAnterior: originalOrderNavThumb,
+                        ordenActual: currentOrder
+                    });
+                    
+                    let is_better = false;
+                    if (document.getElementById("SVGiewer1")){
+                        is_better = true;
+                    }
+                    
+                    // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+                    resetOriginalIndices();
+                    // Actualizar el orden original para futuras comparaciones
+                    originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+                    
+                    // Enviar nuevo orden a la API
+                    let indexNavThumb = Array.from(draggedElementNavThumb.parentNode.children).indexOf(draggedElementNavThumb);
+                    pywebview.api.reorder_SVGs(currentOrder, is_better, indexNavThumb + 1);
+                }
+            }
+
+            function arraysEqual(a, b) {
+                if (a.length !== b.length) return false;
+                for (let i = 0; i < a.length; i++) {
+                    if (a[i] !== b[i]) return false;
+                }
+                return true;
+            }
+
+            // Función auxiliar para inicializar los índices originales en los elementos
+            function initializeOriginalIndices() {
+                const container = document.getElementById('nav-thumbs');
+                if (!container) return;
+                
+                Array.from(container.children).forEach((child, index) => {
+                    child.dataset.originalIndex = index + 1;
+                });
+            }
+
+            // Función para reiniciar los índices después de un cambio
+            function resetOriginalIndices() {
+                const container = document.getElementById('nav-thumbs');
+                if (!container) return;
+                
+                // Reasignar los índices basándose en el orden actual
+                Array.from(container.children).forEach((child, index) => {
+                    child.dataset.originalIndex = index + 1;
+                });
+            }
+            
             // Function to be executed when right-clicking on any SVG
             function handleRightClickPreview(event) {
                 event.preventDefault();
@@ -765,6 +1058,11 @@ class HTMLEditor:
                 const menu = document.createElement("div");
                 menu.className = "context-menu-temp";
 
+
+                const hrline = document.createElement("hr");
+                hrline.style.margin = "0px";
+                hrline.style.borderColor= "#000";
+                
                 // Crear opciones
                 const option1 = document.createElement("div");
                 option1.textContent = "Editar";
@@ -832,18 +1130,50 @@ class HTMLEditor:
                     
                     window.cleanElementSVGAdded(clone_svg);
                     
-                    console.log(clone_svg);
-                    
                     window.final_svg_edit = clone_svg;
                     
                     pywebview.api.refresh_svg_icon();
                 };
+                
+                const option6 = document.createElement("div");
+                option6.textContent = "Añadir página vacia arriba";
+                option6.onclick = () => {
+                    menu.remove();
+                    style.remove();
+                    
+                    let is_better = false;
+                    if (document.getElementById("SVGiewer1")){
+                        is_better = true;
+                    }
+                    
+                    pywebview.api.add_new_SVG(this.id, true, undefined, is_better, true);
+                };
+                
+                const option7 = document.createElement("div");
+                option7.textContent = "Añadir página vacia abajo";
+                option7.onclick = () => {
+                    menu.remove();
+                    style.remove();
+                    
+                    let is_better = false;
+                    if (document.getElementById("SVGiewer1")){
+                        is_better = true;
+                    }
+                    
+                    pywebview.api.add_new_SVG(this.id, undefined, true, is_better, true);
+                };
 
                 menu.appendChild(option1);
+                menu.appendChild(hrline);
                 menu.appendChild(option2);
                 menu.appendChild(option3);
+                menu.appendChild(hrline);
                 menu.appendChild(option4);
+                menu.appendChild(hrline);
                 menu.appendChild(option5);
+                menu.appendChild(hrline);
+                menu.appendChild(option6);
+                menu.appendChild(option7);
 
                 // Posicionar menú
                 menu.style.left = `${event.pageX}px`;
@@ -893,6 +1223,7 @@ class HTMLEditor:
             }
             
             // Custom functions
+            
             window.cleanElementSVGAdded = function(page_var_edited) {
                 // Remove all IDs from internal elements
                 page_var_edited.querySelectorAll("*").forEach(el => {
@@ -932,10 +1263,17 @@ class HTMLEditor:
                 });
             }
 
-            // Also run in case of dynamic content (optional)
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                setTimeout(setupPageElementsPreview, 0);
-            }"""
+            // Inicializar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', makeElementsEditable);
+                document.addEventListener('DOMContentLoaded', setupPageElementsPreview);
+                document.addEventListener('DOMContentLoaded', initDragRepositionNavThumb);
+            } else {
+                makeElementsEditable();
+                setupPageElementsPreview();
+                initDragRepositionNavThumb();
+            }
+            """
         )
         return {
             "success": True,
