@@ -77,161 +77,211 @@ var_better_html = "</div></div></div></div><script>"
 var_better_html += svg_pan_zoom
 var_better_html += """</script>
         <script>
-                const svgs=document.getElementById("svg-container").children;
-                const UA=window.navigator.userAgent;
-                const ua=(UA.indexOf('rv:11')+UA.indexOf('Firefox'))>=0;
-                const svgcount=document.getElementById('svg-container').childElementCount;
-                var styleArr=[];
-                var heightArr=[];
-                var navBar=document.getElementById('navBar');
-                var conInfo=document.getElementById('content-info');
-                for(var i=0;i<svgcount;i++){
-                    styleArr[i] = {width:svgs[i].getAttribute('width'),height:svgs[i].getAttribute('height')}
+            window.addEventListener("load", function () {
+                const svgs = document.getElementById("svg-container").children;
+                const UA = window.navigator.userAgent;
+                const ua = UA.indexOf("rv:11") + UA.indexOf("Firefox") >= 0;
+                let svgcount = document.getElementById("svg-container").childElementCount;
+                var styleArr = [];
+                var heightArr = [];
+                var navBar = document.getElementById("navBar");
+                var conInfo = document.getElementById("content-info");
+                for (var i = 0; i < svgcount; i++) {
+                    styleArr[i] = {
+                        width: svgs[i].getAttribute("width"),
+                        height: svgs[i].getAttribute("height"),
+                    };
                 }
-                window.onresize=function () {
+                window.onresize = function () {
                     renavstyle();
                     resvgstyle();
                 };
-                window.onscroll=renavstyle;
-                window.addEventListener('load', function () {
-                    renavstyle();
-                    var sideWidth=navBar.offsetWidth;
-                    var sideHeight=navBar.offsetHeight;
-                    document.getElementById('content-info').style.marginRight=sideWidth+'px';
-                    document.getElementById('main-content').style.marginRight=sideWidth+'px';
-                    document.getElementById('main-content').style.marginBottom=sideHeight+'px';
-                    resvgstyle();
-                    doscroll();
-                    //Center SVG inside SVG-viewer
-                    document.querySelectorAll('.SVG-viewer').forEach((viewer) => {
-                        // Extraer el número del ID del viewer (asumiendo formato "SVGiewer4", "SVGiewer5", etc.)
-                        const viewerId = viewer.id;
-                        const containerNumber = viewerId.replace('SVGiewer', '');
-                        const zoomContainer = window[`zoomContainer${containerNumber}`];
-                        
-                        if (zoomContainer) {
-                            zoomContainer.zoom(1);
-                            zoomContainer.pan({ 
-                                x: (viewer.offsetWidth - (zoomContainer.getSizes().viewBox.width * zoomContainer.getSizes().realZoom))/2, 
-                                y: (viewer.offsetHeight - (zoomContainer.getSizes().viewBox.height * zoomContainer.getSizes().realZoom))/2 
-                            });
-                        }
-                    });
+                window.onscroll = renavstyle;
+
+                renavstyle();
+                var sideWidth = navBar.offsetWidth;
+                var sideHeight = navBar.offsetHeight;
+                document.getElementById("content-info").style.marginRight =
+                    sideWidth + "px";
+                document.getElementById("main-content").style.marginRight =
+                    sideWidth + "px";
+                document.getElementById("main-content").style.marginBottom =
+                    sideHeight + "px";
+                resvgstyle();
+                doscroll();
+                
+                //Center SVG inside SVG-viewer
+                document.querySelectorAll(".SVG-viewer").forEach((viewer) => {
+                    // Extraer el número del ID del viewer (asumiendo formato "SVGiewer4", "SVGiewer5", etc.)
+                    const viewerId = viewer.id;
+                    const containerNumber = viewerId.replace("SVGiewer", "");
+                    const zoomContainer = window[`zoomContainer${containerNumber}`];
+
+                    if (zoomContainer) {
+                        zoomContainer.zoom(1);
+                        zoomContainer.pan({
+                            x:
+                                (viewer.offsetWidth -
+                                    zoomContainer.getSizes().viewBox.width *
+                                        zoomContainer.getSizes().realZoom) /
+                                2,
+                            y:
+                                (viewer.offsetHeight -
+                                    zoomContainer.getSizes().viewBox.height *
+                                        zoomContainer.getSizes().realZoom) /
+                                2,
+                        });
+                    }
                 });
                 function recontainstyle() {
-                    var topHeight=conInfo.clientHeight;
-                    var svgHeight=0;
-                    for(var i=0;i<svgcount;i++){
-                        heightArr[i]=svgs[i].getBoundingClientRect().height+10;
-                        svgHeight+=svgs[i].clientHeight ||svgs[i].getBoundingClientRect().height;
+                    var topHeight = conInfo.clientHeight;
+                    var svgHeight = 0;
+                    for (var i = 0; i < svgcount; i++) {
+                        heightArr[i] = svgs[i].getBoundingClientRect().height + 10;
+                        svgHeight +=
+                            svgs[i].clientHeight || svgs[i].getBoundingClientRect().height;
                     }
-                    var fullHeight=svgHeight+Number(topHeight);
-                    if(fullHeight<window.innerHeight){
-                    document.getElementById('main-content').style.position='absolute';
-                    document.getElementById('main-content').style.top=topHeight+'px';
-                }else{
-                    document.getElementById('main-content').style.position='';
-                }
+                    var fullHeight = svgHeight + Number(topHeight);
+                    if (fullHeight < window.innerHeight) {
+                        document.getElementById("main-content").style.position = "absolute";
+                        document.getElementById("main-content").style.top =
+                            topHeight + "px";
+                    } else {
+                        document.getElementById("main-content").style.position = "";
+                    }
                 }
                 function resvgstyle() {
-                    var sideWidth=navBar.offsetWidth+20;
-                    for(var i=0;i<svgcount;i++){
+                    var sideWidth = navBar.offsetWidth + 20;
+                    for (var i = 0; i < svgcount; i++) {
                         var oriWidth = styleArr[i].width;
                         var oriHeight = styleArr[i].height;
                         var percent = oriHeight / oriWidth;
-                        var innerWidth=document.body.offsetWidth-sideWidth;
+                        var innerWidth = document.body.offsetWidth - sideWidth;
                         if (innerWidth <= oriWidth) {
-                            svgs[i].removeAttribute('width');
-                            svgs[i].removeAttribute('height');
+                            svgs[i].removeAttribute("width");
+                            svgs[i].removeAttribute("height");
                             if (ua) {
-                                svgs[i].setAttribute('height',innerWidth*percent);
+                                svgs[i].setAttribute("height", innerWidth * percent);
                             }
-                        }else {
-                            svgs[i].setAttribute('width', oriWidth);
-                            svgs[i].setAttribute('height', oriHeight);
+                        } else {
+                            svgs[i].setAttribute("width", oriWidth);
+                            svgs[i].setAttribute("height", oriHeight);
                         }
                     }
                     recontainstyle();
                 }
                 function renavstyle() {
-                    var topHeight=conInfo.clientHeight;
-                    var scrollTop=document.body.scrollTop||document.documentElement.scrollTop;
-                    if(scrollTop>topHeight){
-                        document.getElementById('navBar').style.top=0+'px';
-                    }else{
-                        document.getElementById('navBar').style.top=topHeight-scrollTop+'px';
+                    var topHeight = conInfo.clientHeight;
+                    var scrollTop =
+                        document.body.scrollTop || document.documentElement.scrollTop;
+                    if (scrollTop > topHeight) {
+                        document.getElementById("navBar").style.top = 0 + "px";
+                    } else {
+                        document.getElementById("navBar").style.top =
+                            topHeight - scrollTop + "px";
                     }
                     doscroll();
                 }
                 function doscroll() {
-                    var topHeight=conInfo.clientHeight;
-                    var scrollTop=document.body.scrollTop||document.documentElement.scrollTop;
-                    if((window.innerHeight + window.pageYOffset) >= (document.documentElement.scrollHeight - 5)) {
-                            document.querySelector('#nav-thumbs .selected')?.classList.remove('selected');
-                            document.querySelector('.nav-thumb:nth-of-type('+svgcount+')').classList.add('selected');
-                    }else if (document.body.scrollTop <= 5) {
-                            document.querySelector('#nav-thumbs .selected')?.classList.remove('selected');
-                            document.querySelector('.nav-thumb:nth-of-type(1)').classList.add('selected');
-                    }else{
-                        for(var i=0;i<svgcount;i++){
-                            var sum=0;
-                            for(var j=0;j<=i;j++){
-                                sum+=heightArr[j];
+                    var topHeight = conInfo.clientHeight;
+                    var scrollTop =
+                        document.body.scrollTop || document.documentElement.scrollTop;
+                    if (
+                        window.innerHeight + window.pageYOffset >=
+                        document.documentElement.scrollHeight - 5
+                    ) {
+                        document
+                            .querySelector("#nav-thumbs .selected")
+                            ?.classList.remove("selected");
+                        document
+                            .querySelector(".nav-thumb:nth-of-type(" + svgcount + ")")
+                            .classList.add("selected");
+                    } else if (document.body.scrollTop <= 5) {
+                        document
+                            .querySelector("#nav-thumbs .selected")
+                            ?.classList.remove("selected");
+                        document
+                            .querySelector(".nav-thumb:nth-of-type(1)")
+                            .classList.add("selected");
+                    } else {
+                        for (var i = 0; i < svgcount; i++) {
+                            var sum = 0;
+                            for (var j = 0; j <= i; j++) {
+                                sum += heightArr[j];
                             }
-                            if(scrollTop+window.innerHeight/2-topHeight-sum<0){
-                                var sub=Number(i)+1;
-                                if(document.querySelector('#nav-thumbs .selected')){
-                                    document.querySelector('#nav-thumbs .selected').classList.remove('selected');
+                            if (scrollTop + window.innerHeight / 2 - topHeight - sum < 0) {
+                                var sub = Number(i) + 1;
+                                if (document.querySelector("#nav-thumbs .selected")) {
+                                    document
+                                        .querySelector("#nav-thumbs .selected")
+                                        .classList.remove("selected");
                                 }
-                                if(document.querySelector('.nav-thumb:nth-of-type('+sub+')')){
-                                    document.querySelector('.nav-thumb:nth-of-type('+sub+')').classList.add('selected');
+                                if (
+                                    document.querySelector(
+                                        ".nav-thumb:nth-of-type(" + sub + ")"
+                                    )
+                                ) {
+                                    document
+                                        .querySelector(
+                                            ".nav-thumb:nth-of-type(" + sub + ")"
+                                        )
+                                        .classList.add("selected");
                                 }
                                 break;
                             }
-                        } 
+                        }
                     }
-                    document.querySelector('#nav-thumbs .selected')?.scrollIntoView({
-                        behavior: 'smooth', // opcional: animado
-                        block: 'center',    // centra verticalmente
-                        inline: 'center'    // centra horizontalmente
+                    document.querySelector("#nav-thumbs .selected")?.scrollIntoView({
+                        behavior: "smooth", // opcional: animado
+                        block: "center", // centra verticalmente
+                        inline: "center", // centra horizontalmente
                     });
                 }
-                var navs=document.querySelectorAll('.nav-thumb');
-                for(i=0;i<navs.length;i++){
-                    navs[i].children[0].onclick=function () {
-                        document.querySelector('#nav-thumbs .selected').classList.remove('selected');
-                        this.parentNode.classList.add('selected');
-                    }
+                var navs = document.querySelectorAll(".nav-thumb");
+                for (i = 0; i < navs.length; i++) {
+                    navs[i].children[0].onclick = function () {
+                        document
+                            .querySelector("#nav-thumbs .selected")
+                            .classList.remove("selected");
+                        this.parentNode.classList.add("selected");
+                    };
                 }
                 /* Hacer que se desplaze lentamente */
-                document.querySelectorAll('.scroll-link').forEach(link => {
-                    link.addEventListener('click', function (e) {
+                document.querySelectorAll(".scroll-link").forEach((link) => {
+                    link.addEventListener("click", function (e) {
                         e.preventDefault(); // evita el salto instantáneo
 
-                        var targetId = this.getAttribute('href')?.substring(1); // substring quita el "#"
-                        if (this.getAttribute('xlink:href')) {
-                            targetId = this.getAttribute('xlink:href').substring(1);
+                        var targetId = this.getAttribute("href")?.substring(1); // substring quita el "#"
+                        if (this.getAttribute("xlink:href")) {
+                            targetId = this.getAttribute("xlink:href").substring(1);
                         }
                         const target = document.getElementById(targetId);
 
                         if (target) {
-                        const rect = target.getBoundingClientRect();
-                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        const offset = rect.top + scrollTop - (window.innerHeight / 2) + (rect.height / 2);
+                            const rect = target.getBoundingClientRect();
+                            const scrollTop =
+                                window.pageYOffset || document.documentElement.scrollTop;
+                            const offset =
+                                rect.top +
+                                scrollTop -
+                                window.innerHeight / 2 +
+                                rect.height / 2;
 
-                        window.scrollTo({
-                            top: offset,
-                            behavior: 'smooth'
-                        });
+                            window.scrollTo({
+                                top: offset,
+                                behavior: "smooth",
+                            });
                         }
                     });
                 });
-
+            });
         </script>
 
 
-
         <style>
+            body {
+                background-color: #2c2c2c;
+            }
             .nav-thumb {
                 margin: 5px auto !important;
                 font-family: sans-serif;
@@ -249,6 +299,10 @@ var_better_html += """</script>
 
             #svg-container {
                 margin: 0 5px !important;
+            }
+            
+            #main-area {
+                background-color: #2c2c2c;
             }
 
             #navBar {
