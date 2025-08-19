@@ -24,6 +24,9 @@ class SVGEditor():
         
         if (start_main):
             webview.start(debug=True, private_mode=private_mode)
+    
+    def destroy(self):
+        self.window.destroy()
 
     def open_svg_to_edit(self):
         if (self.svgToEdit):

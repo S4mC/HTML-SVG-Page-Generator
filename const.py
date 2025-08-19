@@ -1,94 +1,96 @@
+# Note: Style added to the best page 
 style_added_page = """
-        <style>
-            body {
-                background-color: #2c2c2c;
-            }
-            .nav-thumb {
-                margin: 5px auto !important;
-                font-family: sans-serif;
-            }
-            
-            .nav-thumb.dragging {
-                opacity: 0.5;
-                z-index: 1000;
-            }
+<style>
+    body {
+        background-color: #2c2c2c;
+    }
+    .nav-thumb {
+        margin: 5px auto !important;
+        font-family: sans-serif;
+    }
+    
+    .nav-thumb.dragging {
+        opacity: 0.5;
+        z-index: 1000;
+    }
 
-            .nav-thumb img {
-                width: 80px;
-            }
+    .nav-thumb img {
+        width: 80px;
+    }
 
-            #svg-container > div {
-                display: block;
-                margin-bottom: 0;
-                margin: 5px auto !important;
-            }
+    #svg-container > div {
+        display: block;
+        margin-bottom: 0;
+        margin: 5px auto !important;
+    }
 
-            #svg-container {
-                margin: 0 5px !important;
-            }
-            
-            #main-area {
-                background-color: #2c2c2c;
-            }
+    #svg-container {
+        margin: 0 5px !important;
+    }
+    
+    #main-area {
+        background-color: #2c2c2c;
+    }
 
-            #navBar {
-                background-color: #2c2c2c !important;
-                color: white !important;
-            }
+    #navBar {
+        background-color: #2c2c2c !important;
+        color: white !important;
+    }
 
-            .nav-thumb > div {
-                border: 1px solid #808080 !important;
-            }
+    .nav-thumb > div {
+        border: 1px solid #808080 !important;
+    }
 
-            #main-content {
-                background-color: #2c2c2c !important;
-            }
+    #main-content {
+        background-color: #2c2c2c !important;
+    }
 
-            #navBar::-webkit-scrollbar{
-                width: 5px;
-                height: 5px;
-                background-color: #2c2c2c;
-            }
-            #navBar::-webkit-scrollbar-track{
-                -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,.3);
-                border-radius: 5px;
-                background-color: #2c2c2c;
-            }
+    #navBar::-webkit-scrollbar{
+        width: 5px;
+        height: 5px;
+        background-color: #2c2c2c;
+    }
+    #navBar::-webkit-scrollbar-track{
+        -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,.3);
+        border-radius: 5px;
+        background-color: #2c2c2c;
+    }
 
-            .SVG-viewer {
-                background: #1b1b1b;
-            }
-            
-            .SVG-viewer svg {
-                width: inherit;
-                height: inherit;
-            }
-            
+    .SVG-viewer {
+        background: #1b1b1b;
+    }
+    
+    .SVG-viewer svg {
+        width: inherit;
+        height: inherit;
+    }
+    
 
-            @media (min-width: 600px) {
-                #main-content {
-                    margin-bottom: 0px !important;
-                }  
-            }
+    @media (min-width: 600px) {
+        #main-content {
+            margin-bottom: 0px !important;
+        }  
+    }
 
-            @media (max-width: 600px) {
-                #navBar {
-                    position: fixed;
-                    left: 0;
-                    top: auto !important;
-                    bottom: 0;
-                }
+    @media (max-width: 600px) {
+        #navBar {
+            position: fixed;
+            left: 0;
+            top: auto !important;
+            bottom: 0;
+        }
 
-                #nav-thumbs {
-                    display: flex;
-                }
+        #nav-thumbs {
+            display: flex;
+        }
 
-                #main-content {
-                    margin-right: 0px !important;
-                }
-            }
-        </style>"""
+        #main-content {
+            margin-right: 0px !important;
+        }
+    }
+</style>"""
 
+# Note: SVG pan Zoom min code
 svg_pan_zoom = """
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw((a.code="MODULE_NOT_FOUND"),a)}
 var p=(n[i]={exports:{}});e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}
@@ -163,222 +165,245 @@ return result}},createRequestAnimationFrame:function(refreshRate){var timeout=nu
 if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else{return requestTimeout(timeout)}},};function requestTimeout(timeout){return function(callback){window.setTimeout(callback,timeout)}}},{},],},{},[3])
 """
 
-#---- var_better_html contains in svg_pan_zoom the code of svg-pan-zoom.min.js, update if svg-pan-zoom.min.js is modified
+# Note: Html replaced at the end of better html
 var_better_html = "</div></div></div></div><script>"
 var_better_html += svg_pan_zoom
 var_better_html += """</script>
-        <script>
-            window.addEventListener("load", function () {
-                const svgs = document.getElementById("svg-container").children;
-                const UA = window.navigator.userAgent;
-                const ua = UA.indexOf("rv:11") + UA.indexOf("Firefox") >= 0;
-                let svgcount = document.getElementById("svg-container").childElementCount;
-                var styleArr = [];
-                var heightArr = [];
-                var navBar = document.getElementById("navBar");
-                var conInfo = document.getElementById("content-info");
-                for (var i = 0; i < svgcount; i++) {
-                    styleArr[i] = {
-                        width: svgs[i].getAttribute("width"),
-                        height: svgs[i].getAttribute("height"),
-                    };
-                }
-                window.onresize = function () {
-                    renavstyle();
-                    resvgstyle();
+<script>
+    window.addEventListener("load", function () {
+        const svgs = document.getElementById("svg-container").children;
+        const UA = window.navigator.userAgent;
+        const ua = UA.indexOf("rv:11") + UA.indexOf("Firefox") >= 0;
+        let svgcount = document.getElementById("svg-container").childElementCount;
+        var styleArr = [];
+        var heightArr = [];
+        var navBar = document.getElementById("navBar");
+        var conInfo = document.getElementById("content-info");
+        
+        function RunAtStartup() {
+            for (var i = 0; i < svgcount; i++) {
+                styleArr[i] = {
+                    width: svgs[i].getAttribute("width"),
+                    height: svgs[i].getAttribute("height"),
                 };
-                window.onscroll = renavstyle;
+            }
+            
+            renavstyle();
+            var sideWidth = navBar.offsetWidth;
+            var sideHeight = navBar.offsetHeight;
+            document.getElementById("content-info").style.marginRight =
+                sideWidth + "px";
+            document.getElementById("main-content").style.marginRight =
+                sideWidth + "px";
+            document.getElementById("main-content").style.marginBottom =
+                sideHeight + "px";
+            resvgstyle();
+            doscroll();
+        }
+        
+        RunAtStartup();
+        
+        let resizeTimeout;
+        let resizeTimeoutLate;
+        window.addEventListener("resize", function () {{
+            clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+            clearTimeout(resizeTimeoutLate);
+            resizeTimeout = setTimeout(function () {{
+                RunAtStartup();
+            }}, 250); // 250ms después de que termine
+            resizeTimeoutLate = setTimeout(function () {{
+                RunAtStartup();
+            }}, 350); // 350ms después de que termine
+        }});
+        
+        window.onscroll = renavstyle;
+        
+        //Center SVG inside SVG-viewer
+        document.querySelectorAll(".SVG-viewer").forEach((viewer) => {
+            // Extraer el número del ID del viewer (asumiendo formato "SVGiewer4", "SVGiewer5", etc.)
+            const viewerId = viewer.id;
+            const containerNumber = viewerId.replace("SVGiewer", "");
+            const zoomContainer = window[`zoomContainer${containerNumber}`];
 
-                renavstyle();
-                var sideWidth = navBar.offsetWidth;
-                var sideHeight = navBar.offsetHeight;
-                document.getElementById("content-info").style.marginRight =
-                    sideWidth + "px";
-                document.getElementById("main-content").style.marginRight =
-                    sideWidth + "px";
-                document.getElementById("main-content").style.marginBottom =
-                    sideHeight + "px";
-                resvgstyle();
-                doscroll();
+            if (zoomContainer) {
+                const rectElement = viewer.querySelector('svg>g>rect');
                 
-                //Center SVG inside SVG-viewer
-                document.querySelectorAll(".SVG-viewer").forEach((viewer) => {
-                    // Extraer el número del ID del viewer (asumiendo formato "SVGiewer4", "SVGiewer5", etc.)
-                    const viewerId = viewer.id;
-                    const containerNumber = viewerId.replace("SVGiewer", "");
-                    const zoomContainer = window[`zoomContainer${containerNumber}`];
+                if (rectElement) {
+                    zoomContainer.zoom(1);
+                    zoomContainer.pan({
+                        x:
+                            (viewer.offsetWidth -
+                                zoomContainer.getSizes().viewBox.width *
+                                    zoomContainer.getSizes().realZoom) /
+                            2,
+                        y:
+                            (viewer.offsetHeight -
+                                zoomContainer.getSizes().viewBox.height *
+                                    zoomContainer.getSizes().realZoom) /
+                            2,
+                    });
+                } else {
+                    zoomContainer.resetZoom();
+                    zoomContainer.fit();
+                    zoomContainer.center();
+                }
+            }
+        });
+        function recontainstyle() {
+            var topHeight = conInfo.clientHeight;
+            var svgHeight = 0;
+            for (var i = 0; i < svgcount; i++) {
+                heightArr[i] = svgs[i].getBoundingClientRect().height + 10;
+                svgHeight +=
+                    svgs[i].clientHeight || svgs[i].getBoundingClientRect().height;
+            }
+            var fullHeight = svgHeight + Number(topHeight);
+            if (fullHeight < window.innerHeight) {
+                document.getElementById("main-content").style.position = "absolute";
+                document.getElementById("main-content").style.top =
+                    topHeight + "px";
+            } else {
+                document.getElementById("main-content").style.position = "";
+            }
+        }
+        function resvgstyle() {
+            var sideWidth = navBar.offsetWidth + 20;
+            for (var i = 0; i < svgcount; i++) {
+                var oriWidth = styleArr[i].width;
+                var oriHeight = styleArr[i].height;
+                var percent = oriHeight / oriWidth;
+                var innerWidth = document.body.offsetWidth - sideWidth;
+                if (innerWidth <= oriWidth) {
+                    svgs[i].removeAttribute("width");
+                    svgs[i].removeAttribute("height");
+                    if (ua) {
+                        svgs[i].setAttribute("height", innerWidth * percent);
+                    }
+                } else {
+                    svgs[i].setAttribute("width", oriWidth);
+                    svgs[i].setAttribute("height", oriHeight);
+                }
+            }
+            recontainstyle();
+        }
+        function renavstyle() {
+            var topHeight = conInfo.clientHeight;
+            var scrollTop =
+                document.body.scrollTop || document.documentElement.scrollTop;
+            if (scrollTop > topHeight) {
+                document.getElementById("navBar").style.top = 0 + "px";
+            } else {
+                document.getElementById("navBar").style.top =
+                    topHeight - scrollTop + "px";
+            }
+            doscroll();
+        }
+        function doscroll() {
+            var topHeight = conInfo.clientHeight;
+            var scrollTop =
+                document.body.scrollTop || document.documentElement.scrollTop;
+            if (
+                window.innerHeight + window.pageYOffset >=
+                document.documentElement.scrollHeight - 5
+            ) {
+                document
+                    .querySelector("#nav-thumbs .selected")
+                    ?.classList.remove("selected");
+                document
+                    .querySelector(".nav-thumb:nth-of-type(" + svgcount + ")")
+                    .classList.add("selected");
+            } else if (document.body.scrollTop <= 5) {
+                document
+                    .querySelector("#nav-thumbs .selected")
+                    ?.classList.remove("selected");
+                document
+                    .querySelector(".nav-thumb:nth-of-type(1)")
+                    .classList.add("selected");
+            } else {
+                for (var i = 0; i < svgcount; i++) {
+                    var sum = 0;
+                    for (var j = 0; j <= i; j++) {
+                        sum += heightArr[j];
+                    }
+                    if (scrollTop + window.innerHeight / 2 - topHeight - sum < 0) {
+                        var sub = Number(i) + 1;
+                        if (document.querySelector("#nav-thumbs .selected")) {
+                            document
+                                .querySelector("#nav-thumbs .selected")
+                                .classList.remove("selected");
+                        }
+                        if (
+                            document.querySelector(
+                                ".nav-thumb:nth-of-type(" + sub + ")"
+                            )
+                        ) {
+                            document
+                                .querySelector(
+                                    ".nav-thumb:nth-of-type(" + sub + ")"
+                                )
+                                .classList.add("selected");
+                        }
+                        break;
+                    }
+                }
+            }
+            document.querySelector("#nav-thumbs .selected")?.scrollIntoView({
+                behavior: "smooth", // opcional: animado
+                block: "center", // centra verticalmente
+                inline: "center", // centra horizontalmente
+            });
+        }
+        var navs = document.querySelectorAll(".nav-thumb");
+        for (i = 0; i < navs.length; i++) {
+            navs[i].children[0].onclick = function () {
+                document
+                    .querySelector("#nav-thumbs .selected")
+                    .classList.remove("selected");
+                this.parentNode.classList.add("selected");
+            };
+        }
+        /* Hacer que se desplaze lentamente */
+        document.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", function (e) {
+                const href = this.getAttribute("href") || this.getAttribute("xlink:href");
+                
+                // Solo procesar si es un enlace interno (empieza con #)
+                if (href && href.startsWith("#")) {
+                    e.preventDefault(); // evita el salto instantáneo
 
-                    if (zoomContainer) {
-                        zoomContainer.zoom(1);
-                        zoomContainer.pan({
-                            x:
-                                (viewer.offsetWidth -
-                                    zoomContainer.getSizes().viewBox.width *
-                                        zoomContainer.getSizes().realZoom) /
-                                2,
-                            y:
-                                (viewer.offsetHeight -
-                                    zoomContainer.getSizes().viewBox.height *
-                                        zoomContainer.getSizes().realZoom) /
-                                2,
+                    const targetId = href.substring(1); // substring quita el "#"
+                    const target = document.getElementById(targetId);
+
+                    if (target) {
+                        const rect = target.getBoundingClientRect();
+                        const scrollTop =
+                            window.pageYOffset || document.documentElement.scrollTop;
+                        const offset =
+                            rect.top +
+                            scrollTop -
+                            window.innerHeight / 2 +
+                            rect.height / 2;
+
+                        window.scrollTo({
+                            top: offset,
+                            behavior: "smooth",
                         });
                     }
-                });
-                function recontainstyle() {
-                    var topHeight = conInfo.clientHeight;
-                    var svgHeight = 0;
-                    for (var i = 0; i < svgcount; i++) {
-                        heightArr[i] = svgs[i].getBoundingClientRect().height + 10;
-                        svgHeight +=
-                            svgs[i].clientHeight || svgs[i].getBoundingClientRect().height;
-                    }
-                    var fullHeight = svgHeight + Number(topHeight);
-                    if (fullHeight < window.innerHeight) {
-                        document.getElementById("main-content").style.position = "absolute";
-                        document.getElementById("main-content").style.top =
-                            topHeight + "px";
-                    } else {
-                        document.getElementById("main-content").style.position = "";
-                    }
                 }
-                function resvgstyle() {
-                    var sideWidth = navBar.offsetWidth + 20;
-                    for (var i = 0; i < svgcount; i++) {
-                        var oriWidth = styleArr[i].width;
-                        var oriHeight = styleArr[i].height;
-                        var percent = oriHeight / oriWidth;
-                        var innerWidth = document.body.offsetWidth - sideWidth;
-                        if (innerWidth <= oriWidth) {
-                            svgs[i].removeAttribute("width");
-                            svgs[i].removeAttribute("height");
-                            if (ua) {
-                                svgs[i].setAttribute("height", innerWidth * percent);
-                            }
-                        } else {
-                            svgs[i].setAttribute("width", oriWidth);
-                            svgs[i].setAttribute("height", oriHeight);
-                        }
-                    }
-                    recontainstyle();
-                }
-                function renavstyle() {
-                    var topHeight = conInfo.clientHeight;
-                    var scrollTop =
-                        document.body.scrollTop || document.documentElement.scrollTop;
-                    if (scrollTop > topHeight) {
-                        document.getElementById("navBar").style.top = 0 + "px";
-                    } else {
-                        document.getElementById("navBar").style.top =
-                            topHeight - scrollTop + "px";
-                    }
-                    doscroll();
-                }
-                function doscroll() {
-                    var topHeight = conInfo.clientHeight;
-                    var scrollTop =
-                        document.body.scrollTop || document.documentElement.scrollTop;
-                    if (
-                        window.innerHeight + window.pageYOffset >=
-                        document.documentElement.scrollHeight - 5
-                    ) {
-                        document
-                            .querySelector("#nav-thumbs .selected")
-                            ?.classList.remove("selected");
-                        document
-                            .querySelector(".nav-thumb:nth-of-type(" + svgcount + ")")
-                            .classList.add("selected");
-                    } else if (document.body.scrollTop <= 5) {
-                        document
-                            .querySelector("#nav-thumbs .selected")
-                            ?.classList.remove("selected");
-                        document
-                            .querySelector(".nav-thumb:nth-of-type(1)")
-                            .classList.add("selected");
-                    } else {
-                        for (var i = 0; i < svgcount; i++) {
-                            var sum = 0;
-                            for (var j = 0; j <= i; j++) {
-                                sum += heightArr[j];
-                            }
-                            if (scrollTop + window.innerHeight / 2 - topHeight - sum < 0) {
-                                var sub = Number(i) + 1;
-                                if (document.querySelector("#nav-thumbs .selected")) {
-                                    document
-                                        .querySelector("#nav-thumbs .selected")
-                                        .classList.remove("selected");
-                                }
-                                if (
-                                    document.querySelector(
-                                        ".nav-thumb:nth-of-type(" + sub + ")"
-                                    )
-                                ) {
-                                    document
-                                        .querySelector(
-                                            ".nav-thumb:nth-of-type(" + sub + ")"
-                                        )
-                                        .classList.add("selected");
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    document.querySelector("#nav-thumbs .selected")?.scrollIntoView({
-                        behavior: "smooth", // opcional: animado
-                        block: "center", // centra verticalmente
-                        inline: "center", // centra horizontalmente
-                    });
-                }
-                var navs = document.querySelectorAll(".nav-thumb");
-                for (i = 0; i < navs.length; i++) {
-                    navs[i].children[0].onclick = function () {
-                        document
-                            .querySelector("#nav-thumbs .selected")
-                            .classList.remove("selected");
-                        this.parentNode.classList.add("selected");
-                    };
-                }
-                /* Hacer que se desplaze lentamente */
-                document.querySelectorAll("a").forEach((link) => {
-                    link.addEventListener("click", function (e) {
-                        const href = this.getAttribute("href") || this.getAttribute("xlink:href");
-                        
-                        // Solo procesar si es un enlace interno (empieza con #)
-                        if (href && href.startsWith("#")) {
-                            e.preventDefault(); // evita el salto instantáneo
-
-                            const targetId = href.substring(1); // substring quita el "#"
-                            const target = document.getElementById(targetId);
-
-                            if (target) {
-                                const rect = target.getBoundingClientRect();
-                                const scrollTop =
-                                    window.pageYOffset || document.documentElement.scrollTop;
-                                const offset =
-                                    rect.top +
-                                    scrollTop -
-                                    window.innerHeight / 2 +
-                                    rect.height / 2;
-
-                                window.scrollTo({
-                                    top: offset,
-                                    behavior: "smooth",
-                                });
-                            }
-                        }
-                    });
-                });
             });
-        </script>
-        </body></html>"""
+        });
+    });
+</script>
+</body></html>"""
 
-#---- Página SVG por defecto
+# Note: Default SVG Page
 svg_page_default = """
 <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
     <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"/>
 </svg>
 """
 
-#---- HTML por defecto en html_content
+# Note: Default HTML in html_content
 html_content_default = """
 <html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Structure</title><style>
         body{
@@ -600,13 +625,12 @@ html_content_default = """
                     margin-right: 0px !important;
                 }
             }
-        </style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style></head><body><div id="main-area"><div id="content-info" style="margin-right: 92px;"></div><div id="main-content" style="margin-right: 92px; margin-bottom: 654px; top: 0px;"><div id="svg-container"><div id="SVGiewer1" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
-            <svg id="page1" xmlns:xlink="http://www.w3.org/1999/xlink" height="793" xmlns="http://www.w3.org/2000/svg" preserveaspectradio="xMinYMin meet" width="1122" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; " xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250818042511346" class="svg-pan-zoom_viewport" transform="matrix(0.6586901763224181,0,0,0.6586901763224181,63.14546599496225,0)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, 0);">
- 
-  
-  <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
- 
+        </style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style></head><body><div id="main-area"><div id="content-info" style="margin-right: 92px;"></div><div id="main-content" style="margin-right: 92px; margin-bottom: 654px; top: 0px;"><div id="svg-container"><div id="SVGiewer1" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
+            
+<svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="page1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; " xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250819011714902" class="svg-pan-zoom_viewport" transform="matrix(0.6586901763224181,0,0,0.6586901763224181,63.14546599496225,0)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, 0);">
+    <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
 </g></svg>
+
             <button style="position: absolute; bottom: 10px; right: 10px;background: transparent; border: 0;">
                 <svg id="zoom-in1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="background: black; border-radius: 50%;"><path fill="#fff" d="M4.929 4.929A10 10 0 1 1 19.07 19.07A10 10 0 0 1 4.93 4.93zM13 9a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2h-2z"></path></svg>
                 <svg id="zoom-out1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="background: black; border-radius: 50%;"><path fill="#fff" d="M17 3.34A10 10 0 1 1 2 12l.005-.324A10 10 0 0 1 17 3.34M16.5 11.5H8.5a0.5 0.5 0 0 0-0.5 0.5v1a0.5 0.5 0 0 0 0.5 0.5h8a0.5 0.5 0 0 0 0.5-0.5v-1a0.5 0.5 0 0 0-0.5-0.5"></path></svg>
@@ -621,32 +645,54 @@ html_content_default = """
                 
                 window.zoomContainer1 = svgPanZoom("#page1");
                 
-                const viewer1 = document.getElementById('SVGiewer1');
-                const rectElement = viewer1.querySelector('svg g rect');
-        
-                if (rectElement) {
-                    // Get the dimensions of the rect
-                    const rectWidth = rectElement.getAttribute('width') || rectElement.width.baseVal.value;
-                    const rectHeight = rectElement.getAttribute('height') || rectElement.height.baseVal.value;
-                    
-                    // Calculate the ratio (height/width)
-                    const aspectRatio = rectHeight / rectWidth;
-                    
-                    // Get the current width of the SVG-viewer
-                    const viewerWidth = viewer1.offsetWidth;
-                    
-                    if (viewerWidth > 0) {
-                        // Calculate the proportional height
-                        const proportionalHeight = viewerWidth * aspectRatio;
+                let viewer1 = document.getElementById('SVGiewer1');
+                let rectElement = viewer1.querySelector('svg>g>rect');
+
+                function proper_height(){
+                    rectElement = viewer1.querySelector('svg>g>rect');
+                    if (rectElement) {
+                        // Get the dimensions of the rect
+                        const rectWidth = rectElement.getAttribute('width') || rectElement.width.baseVal.value;
+                        const rectHeight = rectElement.getAttribute('height') || rectElement.height.baseVal.value;
                         
-                        // Calculate 80vh in pixels
-                        const maxHeight = window.innerHeight * 0.8;
+                        // Calculate the ratio (height/width)
+                        const aspectRatio = rectHeight / rectWidth;
                         
-                        // Apply proportional height with limit of 80vh
-                        const finalHeight = Math.min(proportionalHeight, maxHeight);
-                        viewer1.style.height = finalHeight + 'px';
+                        // Get the current width of the SVG-viewer
+                        const viewerWidth = viewer1.offsetWidth;
+                        
+                        if (viewerWidth > 0) {
+                            // Calculate the proportional height
+                            const proportionalHeight = viewerWidth * aspectRatio;
+                            
+                            // Calculate 80vh in pixels
+                            const maxHeight = window.innerHeight * 0.8;
+                            
+                            // Apply proportional height with limit of 80vh
+                            const finalHeight = Math.min(proportionalHeight, maxHeight);
+                            viewer1.style.height = finalHeight + 'px';
+                        }
                     }
                 }
+                
+                let resizeTimeout;
+                window.addEventListener("resize", function () {
+                    clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+                    resizeTimeout = setTimeout(function () {
+                        viewer1 = document.getElementById('SVGiewer1');
+                        if (window.zoomContainer1) {
+                            window.zoomContainer1.destroy();
+                        }
+                        proper_height();
+                        viewer1.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {
+                            viewport.replaceWith(...viewport.childNodes);
+                        });
+                        window.zoomContainer1 = svgPanZoom("#page1");
+                        center_svg();
+                    }, 280); // 280ms después de que termine
+                });
+                
+                proper_height();
 
                 // Button listeners
                 document.getElementById('zoom-in1').addEventListener('click', function(ev){
@@ -661,13 +707,18 @@ html_content_default = """
                 
                 function center_svg(){
                     const zoomContainer = window.zoomContainer1;
+                    rectElement = viewer1.querySelector('svg>g>rect');
                     
-                    if (zoomContainer) {
+                    if (zoomContainer && rectElement) {
                         zoomContainer.zoom(1);
                         zoomContainer.pan({
                             x: (viewer1.offsetWidth - (zoomContainer.getSizes().viewBox.width * zoomContainer.getSizes().realZoom))/2, 
                             y: (viewer1.offsetHeight - (zoomContainer.getSizes().viewBox.height * zoomContainer.getSizes().realZoom))/2 
                         });
+                    }else{
+                        window.zoomContainer1.resetZoom();
+                        window.zoomContainer1.fit();
+                        window.zoomContainer1.center();
                     }
                 }
 
@@ -680,11 +731,8 @@ html_content_default = """
             });
             </script>
             </div><div id="SVGiewer2" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
-            <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="page2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; "><g id="viewport-20250818042452871" class="svg-pan-zoom_viewport" transform="matrix(0.6586901846944878,0,0,0.6586901846944878,63.145461294045106,-0.000003323711666780582)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, -3.32371e-06);">
- 
-  
-  <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
- 
+            <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="page2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; " xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250819011714902" class="svg-pan-zoom_viewport" transform="matrix(0.6586901763224181,0,0,0.6586901763224181,63.14546599496225,0)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, 0);">
+    <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
 </g></svg>
             <button style="position: absolute; bottom: 10px; right: 10px;background: transparent; border: 0;">
                 <svg id="zoom-in2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="background: black; border-radius: 50%;"><path fill="#fff" d="M4.929 4.929A10 10 0 1 1 19.07 19.07A10 10 0 0 1 4.93 4.93zM13 9a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2h-2z"></path></svg>
@@ -700,32 +748,54 @@ html_content_default = """
                 
                 window.zoomContainer2 = svgPanZoom("#page2");
                 
-                const viewer2 = document.getElementById('SVGiewer2');
-                const rectElement = viewer2.querySelector('svg g rect');
-        
-                if (rectElement) {
-                    // Get the dimensions of the rect
-                    const rectWidth = rectElement.getAttribute('width') || rectElement.width.baseVal.value;
-                    const rectHeight = rectElement.getAttribute('height') || rectElement.height.baseVal.value;
-                    
-                    // Calculate the ratio (height/width)
-                    const aspectRatio = rectHeight / rectWidth;
-                    
-                    // Get the current width of the SVG-viewer
-                    const viewerWidth = viewer2.offsetWidth;
-                    
-                    if (viewerWidth > 0) {
-                        // Calculate the proportional height
-                        const proportionalHeight = viewerWidth * aspectRatio;
+                let viewer2 = document.getElementById('SVGiewer2');
+                let rectElement = viewer2.querySelector('svg>g>rect');
+
+                function proper_height(){
+                    rectElement = viewer2.querySelector('svg>g>rect');
+                    if (rectElement) {
+                        // Get the dimensions of the rect
+                        const rectWidth = rectElement.getAttribute('width') || rectElement.width.baseVal.value;
+                        const rectHeight = rectElement.getAttribute('height') || rectElement.height.baseVal.value;
                         
-                        // Calculate 80vh in pixels
-                        const maxHeight = window.innerHeight * 0.8;
+                        // Calculate the ratio (height/width)
+                        const aspectRatio = rectHeight / rectWidth;
                         
-                        // Apply proportional height with limit of 80vh
-                        const finalHeight = Math.min(proportionalHeight, maxHeight);
-                        viewer2.style.height = finalHeight + 'px';
+                        // Get the current width of the SVG-viewer
+                        const viewerWidth = viewer2.offsetWidth;
+                        
+                        if (viewerWidth > 0) {
+                            // Calculate the proportional height
+                            const proportionalHeight = viewerWidth * aspectRatio;
+                            
+                            // Calculate 80vh in pixels
+                            const maxHeight = window.innerHeight * 0.8;
+                            
+                            // Apply proportional height with limit of 80vh
+                            const finalHeight = Math.min(proportionalHeight, maxHeight);
+                            viewer2.style.height = finalHeight + 'px';
+                        }
                     }
                 }
+                
+                let resizeTimeout;
+                window.addEventListener("resize", function () {
+                    clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+                    resizeTimeout = setTimeout(function () {
+                        viewer2 = document.getElementById('SVGiewer2');
+                        if (window.zoomContainer2) {
+                            window.zoomContainer2.destroy();
+                        }
+                        proper_height();
+                        viewer2.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {
+                            viewport.replaceWith(...viewport.childNodes);
+                        });
+                        window.zoomContainer2 = svgPanZoom("#page2");
+                        center_svg();
+                    }, 280); // 280ms después de que termine
+                });
+                
+                proper_height();
 
                 // Button listeners
                 document.getElementById('zoom-in2').addEventListener('click', function(ev){
@@ -740,13 +810,18 @@ html_content_default = """
                 
                 function center_svg(){
                     const zoomContainer = window.zoomContainer2;
+                    rectElement = viewer2.querySelector('svg>g>rect');
                     
-                    if (zoomContainer) {
+                    if (zoomContainer && rectElement) {
                         zoomContainer.zoom(1);
                         zoomContainer.pan({
                             x: (viewer2.offsetWidth - (zoomContainer.getSizes().viewBox.width * zoomContainer.getSizes().realZoom))/2, 
                             y: (viewer2.offsetHeight - (zoomContainer.getSizes().viewBox.height * zoomContainer.getSizes().realZoom))/2 
                         });
+                    }else{
+                        window.zoomContainer2.resetZoom();
+                        window.zoomContainer2.fit();
+                        window.zoomContainer2.center();
                     }
                 }
 
@@ -758,7 +833,7 @@ html_content_default = """
                 center_svg();
             });
             </script>
-            </div></div></div><div id="navBar" style="top: 0px;"><div id="nav-thumbs"><div class="nav-thumb selected" data-original-index="1" draggable="true"><div><span class="number"><span class="pagenum">1</span></span><a href="#page1" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC8UlEQVR4AeySwWrDMBBETY/psaf8/x/mnNKmAaOLEFSSR9qdV2pibKzdefM+7l/3Hy4YzHbg43j9PR6PgwsGsxx4fj+Pt1gvt/iHwFQCiDUVJ4edBBDrJMHvVAKINRUnh50EEOskkf1XnA+xxMBdxiGWS9PinIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBl3G57xArd7/L0iHWMvS5ByNW7n6XpUOsZehzD0as3P0uS4dYy9DnHoxYpV/uJhJArIkwOaoQQKzCgruJBBBrIkyOKgQQq7DgbiIBxJoIk6MKAcQqLLibSGBrsSbm5CgxAcQSA3cZh1guTYtzIpYYuMs4xHJpWpwTscTAXcYhlkvT4pz/E0u8HOPiEkCsuN1tvTlibV1P3OUQK253W2+OWFvXE3c5xIrb3dabI9bW9SxbbngwYg0j5IAaAcSqUeHZMAHEGkbIATUCiFWjwrNhAog1jJADagQQq0aFZ8MEEGsYoeaAaFMQK1pjQfZFrCBFRVsTsaI1FmRfxApSVLQ1EStaY0H2RawgRUVbE7F6G+O7JgHEauLhZS8BxOolx3dNAojVxMPLXgKI1UuO75oEEKuJh5e9BBCrlxzfNQkkEquZk5diAoglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTmvFEschXE7EUCsndpItAtiJSpzpyiItVMbiXZBrERl7hQFsXZqI9EuiJWozGVRKoMRqwKFR+MEEGucISdUCCBWBQqPxgkg1jhDTqgQQKwKFB6NE0CscYacUCGAWBUo8R+tT4BY6ztIuQFipax1fSjEWt9Byg0QK2Wt60Mh1voOUm6AWClrXR8KsTQd2E1BLLvKNYERS8PZbgpi2VWuCYxYGs52UxDLrnJNYMTScLabYiuWXdPiwIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTn3EUscnHHXEkCsa/nano5YttVfG/wt1u3zdnDBYJYDf8r+AgAA///VBHUkAAAABklEQVQDAFPXd2TNvaLnAAAAAElFTkSuQmCC" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer; position: relative;">Page1</p></div><div class="nav-thumb" data-original-index="1" draggable="true"><div><span class="number"><span class="pagenum">2</span></span><a href="#page2" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC9klEQVR4AeySMW7DMBAEBT/ATdIY/v8H3aVKLBdiQxCISC15t2PAACFBvNvZuT2/nz+Pr8cvfxiMcmB36ra9f6/Xa+MPg1EOvJXaPmLtB/4QGEkAsUbS5K6DAGIdKDiMJIBYI2ly10EAsQ4UyQ/ieIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwy8jMt9Qqzc/U5Lh1jT0OcejFi5+52WDrGmoc89GLFy9zstHWJNQ597MGKVfjkNJIBYA2FyVSGAWIUFp4EEEGsgTK4qBBCrsOA0kABiDYTJVYUAYhUWnAYSWFqsgTm5SkwAscTAXcYhlkvT4pyIJQbuMg6xXJoW50QsMXCXcYjl0rQ45//EEi/HuLgEECtud0tvjlhL1xN3OcSK293SmyPW0vXEXQ6x4na39OaItXQ905brHoxY3Qi5oEYAsWpUeNZNALG6EXJBjQBi1ajwrJsAYnUj5IIaAcSqUeFZNwHE6kaouSDaFMSK1liQfRErSFHR1kSsaI0F2RexghQVbU3EitZYkH0RK0hR0dZErLON8V2TAGI18fDyLAHEOkuO75oEEKuJh5dnCSDWWXJ81ySAWE08vDxLALHOkuO7JoFEYjVz8lJMALHEwF3GIZZL0+KciCUG7jIOsVyaFudELDFwl3GI5dK0OOeVYomjMG4lAoi1UhuJdkGsRGWuFAWxVmoj0S6IlajMlaIg1kptJNoFsRKVOS1KZTBiVaDwqJ8AYvUz5IYKAcSqQOFRPwHE6mfIDRUCiFWBwqN+AojVz5AbKgQQqwIl/qP5CRBrfgcpN0CslLXOD4VY8ztIuQFipax1fijEmt9Byg0QK2Wt80MhlqYDuymIZVe5JjBiaTjbTUEsu8o1gRFLw9luCmLZVa4JjFgaznZTbMWya1ocGLHEwF3GIZZL0+KciCUG7jIOsVyaFudELDFwl3GI5dK0OOc6YomDM+5aAoh1LV/b2xHLtvprg3/Eut/vG38YjHJgV/YPAAD//yJm5zsAAAAGSURBVAMAsZV6yd8c0+IAAAAASUVORK5CYII=" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer; position: relative;">Page2</p></div></div></div></div><script>
+            </div></div></div><div id="navBar" style="top: 0px;"><div id="nav-thumbs"><div class="nav-thumb" data-original-index="1" draggable="true"><div><span class="number"><span class="pagenum">1</span></span><a href="#page1" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC80lEQVR4AeySQWrEMBAETb6y5As57P/vYf+y92SzYHQRgkhySzNdIWaNjTXT1fVx/7r/cMFgtgMfx+vv8f04uGAwy4Hn83m8xXq5xT8EphJArKk4OewkgFgnCX6nEkCsqTg57CSAWCeJ7L/ifIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwy8jMt9h1i5+12WDrGWoc89GLFy97ssHWItQ597MGLl7ndZOsRahj73YMQq/XI3kQBiTYTJUYUAYhUW3E0kgFgTYXJUIYBYhQV3Ewkg1kSYHFUIIFZhwd1EAluLNTEnR4kJIJYYuMs4xHJpWpwTscTAXcYhlkvT4pyIJQbuMg6xXJoW5/yfWOLlGBeXAGLF7W7rzRFr63riLodYcbvbenPE2rqeuMshVtzutt4csbauZ9lyw4MRaxghB9QIIFaNCs+GCSDWMEIOqBFArBoVng0TQKxhhBxQI4BYNSo8GyaAWMMINQdEm4JY0RoLsi9iBSkq2pqIFa2xIPsiVpCioq2JWNEaC7IvYgUpKtqaiNXbGN81CSBWEw8vewkgVi85vmsSQKwmHl72EkCsXnJ81ySAWE08vOwlgFi95PiuSSCRWM2cvBQTQCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtznmlWOIojNuJAGLt1EaiXRArUZk7RUGsndpItAtiJSpzpyiItVMbiXZBrERlLotSGYxYFSg8GieAWOMMOaFCALEqUHg0TgCxxhlyQoUAYlWg8GicAGKNM+SECgHEqkCJ/2h9AsRa30HKDRArZa3rQyHW+g5SboBYKWtdHwqx1neQcgPESlnr+lCIpenAbgpi2VWuCYxYGs52UxDLrnJNYMTScLabglh2lWsCI5aGs90UW7HsmhYHRiwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtzrmPWOLgjLuWAGJdy9f2dMSyrf7a4G+xbp+3gwsGsxz4U/YXAAD//wSH6KcAAAAGSURBVAMAvfykBV+l+v8AAAAASUVORK5CYII=" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer; position: relative;">page1</p></div><div class="nav-thumb selected" data-original-index="2"><div><span class="number"><span class="pagenum">2</span></span><a href="#page2" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC+ElEQVR4AeySQYrDMBAETT4U9rKHQP5/XPKePewmOVgXIYgltzTTFQgIG2umq+tyv91/b9+3P/4wGOXAy6nL9vw9fh4bfxiMcuCp1PYW63XgD4GRBBBrJE3u2gkg1o6Cw0gCiDWSJnftBBBrR5H8II6HWGLgLuMQy6VpcU7EEgN3GYdYLk2LcyKWGLjLOMRyaVqcE7HEwMu43CfEyt3vtHSINQ197sGIlbvfaekQaxr63IMRK3e/09Ih1jT0uQcjVumX00ACiDUQJlcVAohVWHAaSACxBsLkqkIAsQoLTgMJINZAmFxVCCBWYcFpIIGlxRqYk6vEBBBLDNxlHGK5NC3OiVhi4C7jEMulaXFOxBIDdxmHWC5Ni3N+JpZ4OcbFJYBYcbtbenPEWrqeuMshVtzult4csZauJ+5yiBW3u6U3R6yl65m2XPdgxOpGyAU1AohVo8KzbgKI1Y2QC2oEEKtGhWfdBBCrGyEX1AggVo0Kz7oJIFY3Qs0F0aYgVrTGguyLWEGKirYmYkVrLMi+iBWkqGhrIla0xoLsi1hBioq2JmIdbYzvmgQQq4mHl0cJINZRcnzXJIBYTTy8PEoAsY6S47smAcRq4uHlUQKIdZQc3zUJJBKrmZOXYgKIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU5zxRLHIVxKxFArJXaSLQLYiUqc6UoiLVSG4l2QaxEZa4UBbFWaiPRLoiVqMxpUSqDEasChUf9BBCrnyE3VAggVgUKj/oJIFY/Q26oEECsChQe9RNArH6G3FAhgFgVKPEfzU+AWPM7SLkBYqWsdX4oxJrfQcoNECtlrfNDIdb8DlJugFgpa50fCrE0HdhNQSy7yjWBEUvD2W4KYtlVrgmMWBrOdlMQy65yTWDE0nC2m2Irll3T4sCIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU51xFLHJxx5xJArHP52t6OWLbVnxv8Ldb167rxh8EoB17K/gMAAP//Lom99gAAAAZJREFUAwCBBrYFJf87MwAAAABJRU5ErkJggg==" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer;">page2</p></div></div></div></div><script>
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw((a.code="MODULE_NOT_FOUND"),a)}
 var p=(n[i]={exports:{}});e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}
 return n[i].exports}
@@ -841,29 +916,44 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
         var heightArr = [];
         var navBar = document.getElementById("navBar");
         var conInfo = document.getElementById("content-info");
-        for (var i = 0; i < svgcount; i++) {
-            styleArr[i] = {
-                width: svgs[i].getAttribute("width"),
-                height: svgs[i].getAttribute("height"),
-            };
-        }
-        window.onresize = function () {
+        
+        function RunAtStartup() {
+            for (var i = 0; i < svgcount; i++) {
+                styleArr[i] = {
+                    width: svgs[i].getAttribute("width"),
+                    height: svgs[i].getAttribute("height"),
+                };
+            }
+            
             renavstyle();
+            var sideWidth = navBar.offsetWidth;
+            var sideHeight = navBar.offsetHeight;
+            document.getElementById("content-info").style.marginRight =
+                sideWidth + "px";
+            document.getElementById("main-content").style.marginRight =
+                sideWidth + "px";
+            document.getElementById("main-content").style.marginBottom =
+                sideHeight + "px";
             resvgstyle();
-        };
+            doscroll();
+        }
+        
+        RunAtStartup();
+        
+        let resizeTimeout;
+        let resizeTimeoutLate;
+        window.addEventListener("resize", function () {{
+            clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+            clearTimeout(resizeTimeoutLate);
+            resizeTimeout = setTimeout(function () {{
+                RunAtStartup();
+            }}, 250); // 250ms después de que termine
+            resizeTimeoutLate = setTimeout(function () {{
+                RunAtStartup();
+            }}, 350); // 350ms después de que termine
+        }});
+        
         window.onscroll = renavstyle;
-
-        renavstyle();
-        var sideWidth = navBar.offsetWidth;
-        var sideHeight = navBar.offsetHeight;
-        document.getElementById("content-info").style.marginRight =
-            sideWidth + "px";
-        document.getElementById("main-content").style.marginRight =
-            sideWidth + "px";
-        document.getElementById("main-content").style.marginBottom =
-            sideHeight + "px";
-        resvgstyle();
-        doscroll();
         
         //Center SVG inside SVG-viewer
         document.querySelectorAll(".SVG-viewer").forEach((viewer) => {
@@ -873,19 +963,27 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
             const zoomContainer = window[`zoomContainer${containerNumber}`];
 
             if (zoomContainer) {
-                zoomContainer.zoom(1);
-                zoomContainer.pan({
-                    x:
-                        (viewer.offsetWidth -
-                            zoomContainer.getSizes().viewBox.width *
-                                zoomContainer.getSizes().realZoom) /
-                        2,
-                    y:
-                        (viewer.offsetHeight -
-                            zoomContainer.getSizes().viewBox.height *
-                                zoomContainer.getSizes().realZoom) /
-                        2,
-                });
+                const rectElement = viewer.querySelector('svg>g>rect');
+                
+                if (rectElement) {
+                    zoomContainer.zoom(1);
+                    zoomContainer.pan({
+                        x:
+                            (viewer.offsetWidth -
+                                zoomContainer.getSizes().viewBox.width *
+                                    zoomContainer.getSizes().realZoom) /
+                            2,
+                        y:
+                            (viewer.offsetHeight -
+                                zoomContainer.getSizes().viewBox.height *
+                                    zoomContainer.getSizes().realZoom) /
+                            2,
+                    });
+                } else {
+                    zoomContainer.resetZoom();
+                    zoomContainer.fit();
+                    zoomContainer.center();
+                }
             }
         });
         function recontainstyle() {
@@ -1036,7 +1134,516 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
 </body></html>
 """
 
-#---- HTML para la interfaz
+# Note: Js injected in preview
+js_injected_preview = """
+function limpiarAtributosDuplicados(svgString) {
+    // Parse as HTML to avoid errors due to malformed XML
+    const doc = new DOMParser().parseFromString(svgString, "text/html");
+    const svgEl = doc.body.firstElementChild;
+
+    if (!svgEl || svgEl.tagName.toLowerCase() !== 'svg') {
+        console.warn('No valid SVG element could be found.');
+        return svgString; // Return the original if it fails
+    }
+
+    // Use a Map to keep only the first unique attributes
+    const seen = new Set();
+    const toRemove = [];
+
+    for (const attr of Array.from(svgEl.attributes)) {
+        if (seen.has(attr.name)) {
+            toRemove.push(attr.name);
+        } else {
+            seen.add(attr.name);
+        }
+    }
+
+    // Eliminate duplicate attributes
+    for (const name of toRemove) {
+        svgEl.removeAttribute(name);
+    }
+    
+    window.actual_viewport = null;
+    
+    // Takes the contents of the viewport out
+    svgEl.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {
+        viewport.replaceWith(...viewport.childNodes);
+        window.actual_viewport = true; // The edited SVG has a viewport
+    });
+
+    // Serialize only the clean SVG
+    return svgEl.outerHTML;
+}
+
+// Función para hacer elementos editables con doble clic
+function makeElementsEditable() {
+    // Seleccionar todos los elementos que coincidan con el patrón
+    const elements = document.querySelectorAll("#nav-thumbs > div > p");
+    
+    elements.forEach(element => {
+        // Agregar event listener para doble clic
+        element.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            startEditing(this);
+        });
+        
+        // Opcional: agregar cursor pointer para indicar que es editable
+        element.style.cursor = 'pointer';
+        element.title = 'Doble clic para editar';
+    });
+}
+
+function startEditing(element) {
+    // Verificar si ya está siendo editado
+    if (element.querySelector('.edit-input')) {
+        return;
+    }
+    
+    // Obtener el texto actual
+    const currentText = element.textContent;
+    
+    // Crear el input de edición
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentText;
+    input.className = 'edit-input';
+    
+    // Estilos para el input
+    input.style.cssText = `
+        width: 100%;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: inherit;
+        font-size: inherit;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        outline: none;
+    `;
+    
+    // Ocultar el texto original temporalmente
+    const originalDisplay = element.style.display;
+    element.style.position = 'relative';
+    
+    // Guardar el contenido original y limpiarlo
+    const originalContent = element.innerHTML;
+    element.innerHTML = '';
+    element.appendChild(input);
+    
+    // Enfocar y seleccionar todo el texto
+    input.focus();
+    input.select();
+    
+    // Función para confirmar los cambios
+    function confirmEdit() {
+        const newText = input.value.trim();
+        element.innerHTML = originalContent;
+        if (newText && newText !== currentText) {
+            element.textContent = newText;
+        }
+        element.style.display = originalDisplay;
+        
+        // Save the changues
+        pywebview.api.update_html_content();
+    }
+    
+    // Función para cancelar los cambios
+    function cancelEdit() {
+        element.innerHTML = originalContent;
+        element.style.display = originalDisplay;
+    }
+    
+    // Event listeners para el input
+    input.addEventListener('keydown', function(e) {
+        e.stopPropagation();
+        
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmEdit();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancelEdit();
+        }
+    });
+    
+    // Confirmar al perder el foco (opcional)
+    input.addEventListener('blur', function(e) {
+        // Pequeño delay para permitir que otros eventos se procesen primero
+        setTimeout(() => {
+            if (element.querySelector('.edit-input')) {
+                confirmEdit();
+            }
+        }, 100);
+    });
+    
+    // Prevenir que el clic en el input active otros eventos
+    input.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+}
+
+// Funciones que permiten cambiar orden de los SVG
+let draggedElementNavThumb = null;
+let originalOrderNavThumb = [];
+
+function initDragRepositionNavThumb() {
+    const container = document.getElementById('nav-thumbs');
+    if (!container) return;
+
+    // Inicializar índices automáticamente
+    initializeOriginalIndices();
+    
+    // Guardar orden inicial
+    saveOriginalOrderNavThumb();
+
+    container.addEventListener('mousedown', (e) => {
+        // Buscar el elemento nav-thumb más cercano hacia arriba
+        const navThumbElement = e.target.closest('.nav-thumb');
+        if (navThumbElement) {
+            // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+            resetOriginalIndices();
+            // Actualizar el orden original para futuras comparaciones
+            originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+            // Activar draggable solo al presionar mouse
+            navThumbElement.draggable = true;
+        }
+    });
+
+    container.addEventListener('dragstart', (e) => {
+        // Buscar el elemento nav-thumb más cercano hacia arriba
+        const navThumbElement = e.target.closest('.nav-thumb');
+        if (navThumbElement) {
+            draggedElementNavThumb = navThumbElement;
+            navThumbElement.classList.add('dragging');
+        }
+    });
+
+    container.addEventListener('dragend', (e) => {
+        // Buscar el elemento nav-thumb más cercano hacia arriba
+        const navThumbElement = e.target.closest('.nav-thumb');
+        if (navThumbElement) {
+            navThumbElement.classList.remove('dragging');
+            // Desactivar draggable al terminar
+            navThumbElement.removeAttribute("draggable");
+            checkPositionChangeNavThumb();
+            draggedElementNavThumb = null;
+        }
+    });
+
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElementNavThumb(container, e.clientY);
+        if (!draggedElementNavThumb) { return; }
+        if (afterElement == null) {
+            container.appendChild(draggedElementNavThumb);
+        } else {
+            container.insertBefore(draggedElementNavThumb, afterElement);
+        }
+    });
+}
+
+function saveOriginalOrderNavThumb() {
+    const container = document.getElementById('nav-thumbs');
+    // Crear orden secuencial [1, 2, 3, 4, 5...]
+    originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+}
+
+function getDragAfterElementNavThumb(container, y) {
+    const draggableElements = [...container.querySelectorAll('.nav-thumb:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function checkPositionChangeNavThumb() {
+    const container = document.getElementById('nav-thumbs');
+    
+    // Crear array numérico basado en los data-original-index de los elementos en su orden actual
+    const currentOrder = Array.from(container.children).map(child => {
+        return parseInt(child.dataset.originalIndex);
+    });
+
+    const hasChanged = !arraysEqual(originalOrderNavThumb, currentOrder);
+    
+    if (hasChanged) {
+        console.log('Reposicionamiento completado - Posición cambiada:', {
+            ordenAnterior: originalOrderNavThumb,
+            ordenActual: currentOrder
+        });
+        
+        // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+        resetOriginalIndices();
+        // Actualizar el orden original para futuras comparaciones
+        originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
+        
+        // Enviar nuevo orden a la API
+        let indexNavThumb = Array.from(draggedElementNavThumb.parentNode.children).indexOf(draggedElementNavThumb);
+        pywebview.api.reorder_SVGs(currentOrder, indexNavThumb + 1);
+    }
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+
+// Función auxiliar para inicializar los índices originales en los elementos
+function initializeOriginalIndices() {
+    const container = document.getElementById('nav-thumbs');
+    if (!container) return;
+    
+    Array.from(container.children).forEach((child, index) => {
+        child.dataset.originalIndex = index + 1;
+    });
+}
+
+// Función para reiniciar los índices después de un cambio
+function resetOriginalIndices() {
+    const container = document.getElementById('nav-thumbs');
+    if (!container) return;
+    
+    // Reasignar los índices basándose en el orden actual
+    Array.from(container.children).forEach((child, index) => {
+        child.dataset.originalIndex = index + 1;
+    });
+}
+
+// Function to be executed when right-clicking on any SVG
+function handleRightClickPreview(event) {
+    event.preventDefault();
+
+    // Eliminar cualquier menú anterior
+    document.querySelectorAll(".context-menu-temp").forEach(menu => menu.remove());
+
+    // Crear estilos desde JS
+    const style = document.createElement("style");
+    style.textContent = `
+        .context-menu-temp {
+            position: absolute;
+            background: #222;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            padding: 5px 0;
+            font-family: sans-serif;
+            min-width: 150px;
+            z-index: 9999;
+        }
+        .context-menu-temp div {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .context-menu-temp div:hover {
+            background: #444;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Crear el contenedor del menú
+    const menu = document.createElement("div");
+    menu.className = "context-menu-temp";
+
+
+    const hrline = document.createElement("hr");
+    hrline.style.margin = "0px";
+    hrline.style.borderColor= "#000";
+    
+    // Crear opciones
+    const option1 = document.createElement("div");
+    option1.textContent = "Editar";
+    option1.onclick = () => {
+        menu.remove();
+        style.remove();
+        let svgHtml = limpiarAtributosDuplicados(this.outerHTML);
+        pywebview.api.open_svg_editor(svgHtml, this.id);
+    };
+
+    const option2 = document.createElement("div");
+    option2.textContent = "Añadir svg arriba";
+    option2.onclick = () => {
+        menu.remove();
+        style.remove();
+                            
+        pywebview.api.add_new_SVG(this.id, true, undefined);
+    };
+    
+    const option3 = document.createElement("div");
+    option3.textContent = "Añadir svg abajo";
+    option3.onclick = () => {
+        menu.remove();
+        style.remove();
+        
+        pywebview.api.add_new_SVG(this.id, undefined, true);
+    };
+    
+    const option4 = document.createElement("div");
+    option4.textContent = "Eliminar";
+    option4.onclick = () => {
+        menu.remove();
+        style.remove();
+        
+        if (confirm("¿Estás seguro de que deseas eliminar esta página?")) {
+            // Si el usuario hace clic en "Aceptar", llama a la función de Python
+            pywebview.api.delete_this_SVG(this.id);
+        }
+    };
+    
+    const option5 = document.createElement("div");
+    option5.textContent = "Actualizar icono";
+    option5.onclick = () => {
+        menu.remove();
+        style.remove();
+        
+        let clone_svg = this.cloneNode(true);
+        
+        window.cleanElementSVGAdded(clone_svg);
+        
+        window.final_svg_edit = clone_svg;
+        
+        pywebview.api.refresh_svg_icon();
+    };
+    
+    const option6 = document.createElement("div");
+    option6.textContent = "Añadir página vacia arriba";
+    option6.onclick = () => {
+        menu.remove();
+        style.remove();
+        
+        pywebview.api.add_new_SVG(this.id, true, undefined, true);
+    };
+    
+    const option7 = document.createElement("div");
+    option7.textContent = "Añadir página vacia abajo";
+    option7.onclick = () => {
+        menu.remove();
+        style.remove();
+        
+        pywebview.api.add_new_SVG(this.id, undefined, true, true);
+    };
+
+    menu.appendChild(option1);
+    menu.appendChild(hrline.cloneNode());
+    menu.appendChild(option2);
+    menu.appendChild(option3);
+    menu.appendChild(hrline.cloneNode());
+    menu.appendChild(option4);
+    menu.appendChild(hrline.cloneNode());
+    menu.appendChild(option5);
+    menu.appendChild(hrline.cloneNode());
+    menu.appendChild(option6);
+    menu.appendChild(option7);
+
+    // Posicionar menú
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
+
+    document.body.appendChild(menu);
+
+    // Cerrar si se hace clic fuera o se presiona Escape
+    const closeMenu = () => {
+        menu.remove();
+        style.remove();
+        document.removeEventListener("click", outsideClick);
+        document.removeEventListener("keydown", escClose);
+    };
+
+    const outsideClick = e => {
+        if (!menu.contains(e.target)) closeMenu();
+    };
+
+    const escClose = e => {
+        if (e.key === "Escape") closeMenu();
+    };
+
+    setTimeout(() => {
+        document.addEventListener("click", outsideClick);
+        document.addEventListener("keydown", escClose);
+    }, 0);
+}
+
+// Find and assign events to elements
+function setupPageElementsPreview() {
+    let pageNumber = 1;
+    let elementExists = true;
+    
+    while (elementExists) {
+        const elementId = `page${pageNumber}`;
+        const element = document.getElementById(elementId);
+        
+        if (element) {
+            // Asignar el evento de clic derecho
+            element.addEventListener('contextmenu', handleRightClickPreview);
+            pageNumber++;
+        } else {
+            elementExists = false;
+        }
+    }
+}
+
+// Custom functions
+
+window.cleanElementSVGAdded = function(page_var_edited) {
+    // Remove all IDs from internal elements
+    page_var_edited.querySelectorAll("*").forEach(el => {
+        el.removeAttribute("id");
+        if (el.tagName.toLowerCase() === 'title') {
+            el.remove();
+        }
+    });
+    
+    // Take the content of each layer and put it in the DOM where it was
+    page_var_edited.querySelectorAll('.layer').forEach(layer => {
+        layer.replaceWith(...layer.childNodes);
+    });
+    
+    page_var_edited.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {
+        viewport.replaceWith(...viewport.childNodes);
+    });
+}
+
+window.runScripts = function(containerElement) {
+    const scripts = containerElement.querySelectorAll("script");
+    scripts.forEach(oldScript => {
+        const newScript = document.createElement("script");
+        
+        // Copiar el contenido inline
+        if (oldScript.textContent) {
+            newScript.textContent = oldScript.textContent;
+        }
+        
+        // Copiar atributos (src, type, etc.)
+        for (let attr of oldScript.attributes) {
+            newScript.setAttribute(attr.name, attr.value);
+        }
+        
+        // Reemplazar el viejo <script> por el nuevo ejecutable
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', makeElementsEditable);
+    document.addEventListener('DOMContentLoaded', setupPageElementsPreview);
+    document.addEventListener('DOMContentLoaded', initDragRepositionNavThumb);
+} else {
+    makeElementsEditable();
+    setupPageElementsPreview();
+    initDragRepositionNavThumb();
+}
+"""
+
+# Note: HTML for the interface
 html_interface = """
 <!DOCTYPE html>
 <html>
@@ -1061,17 +1668,14 @@ html_interface = """
             text-align: center;
         }
         .section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            margin-bottom: 5px;
         }
         .section h2 {
             color: #555;
             margin-top: 0;
         }
         button {
-            background-color: #4CAF50;
+            background-color: #4f4f4f;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -1080,11 +1684,11 @@ html_interface = """
             margin: 5px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #575656;
         }
         textarea {
             width: 100%;
-            height: 300px;
+            height: 380px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -1116,13 +1720,12 @@ html_interface = """
     <div class="container">
             
         <div class="section">
-            <h2>Archivo</h2>
             <button onclick="openFile()">Abrir archivo HTML</button>
             <span id="currentFile" class="filename">Sin archivo</span>
         </div>
         
         <div class="section">
-            <button id="openPreviewButton" onclick="open_preview()">Open Preview</button>
+            <button id="openPreviewButton" onclick="open_preview()">Open editable preview 🖋️🏞️</button>
         </div>
         
         <div class="section">
@@ -1132,7 +1735,7 @@ html_interface = """
         <div id="status"></div>
         
         <div class="section">
-            <h2>Contenido actual</h2>
+            <span style="font-family: monospace;">Contenido actual:</span>
             <textarea id="contentArea" readonly></textarea>
         </div>
     </div>
@@ -1178,10 +1781,7 @@ html_interface = """
             let html_preview = document.getElementById('contentArea').value;
             
             pywebview.api.open_preview_window(html_preview).then(result => {
-                if (result.success) {
-                    // updateContent(result.content, document.getElementById('currentFile').textContent);
-                    showStatus('Ok');
-                } else {
+                if (!result.success) {
                     showStatus(result.error, true);
                 }
             });
