@@ -1,6 +1,11 @@
 # Note: Style added to the best page 
 style_added_page = """
 <style>
+    html {
+        scrollbar-color: #848484 transparent;
+        scrollbar-width: thin;
+    }
+
     body {
         background-color: #2c2c2c;
     }
@@ -399,7 +404,7 @@ var_better_html += """</script>
 # Note: Default SVG Page
 svg_page_default = """
 <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
-    <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"/>
+    <rect fill="#0b050b" height="794" width="1123" x="0" y="0"/>
 </svg>
 """
 
@@ -537,98 +542,13 @@ html_content_default = """
             border-color: #08a1ef transparent;
         }
 </style>
-        <style>
-            body {
-                background-color: #2c2c2c;
-            }
-            .nav-thumb {
-                margin: 5px auto !important;
-                font-family: sans-serif;
-            }
-            
-            .nav-thumb.dragging {
-                opacity: 0.5;
-                z-index: 1000;
-            }
-
-            .nav-thumb img {
-                width: 80px;
-            }
-
-            #svg-container > div {
-                display: block;
-                margin-bottom: 0;
-                margin: 5px auto !important;
-            }
-
-            #svg-container {
-                margin: 0 5px !important;
-            }
-            
-            #main-area {
-                background-color: #2c2c2c;
-            }
-
-            #navBar {
-                background-color: #2c2c2c !important;
-                color: white !important;
-            }
-
-            .nav-thumb > div {
-                border: 1px solid #808080 !important;
-            }
-
-            #main-content {
-                background-color: #2c2c2c !important;
-            }
-
-            #navBar::-webkit-scrollbar{
-                width: 5px;
-                height: 5px;
-                background-color: #2c2c2c;
-            }
-            #navBar::-webkit-scrollbar-track{
-                -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,.3);
-                border-radius: 5px;
-                background-color: #2c2c2c;
-            }
-
-            .SVG-viewer {
-                background: #1b1b1b;
-            }
-            
-            .SVG-viewer svg {
-                width: inherit;
-                height: inherit;
-            }
-            
-
-            @media (min-width: 600px) {
-                #main-content {
-                    margin-bottom: 0px !important;
-                }  
-            }
-
-            @media (max-width: 600px) {
-                #navBar {
-                    position: fixed;
-                    left: 0;
-                    top: auto !important;
-                    bottom: 0;
-                }
-
-                #nav-thumbs {
-                    display: flex;
-                }
-
-                #main-content {
-                    margin-right: 0px !important;
-                }
-            }
-        </style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style></head><body><div id="main-area"><div id="content-info" style="margin-right: 92px;"></div><div id="main-content" style="margin-right: 92px; margin-bottom: 654px; top: 0px;"><div id="svg-container"><div id="SVGiewer1" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
+"""
+html_content_default += style_added_page
+html_content_default += """
+<style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style><style type="text/css">body {-webkit-user-select: none; -khtml-user-select: none; -ms-user-select: none; user-select: none; cursor: default;}</style></head><body><div id="main-area"><div id="content-info" style="margin-right: 92px;"></div><div id="main-content" style="margin-right: 92px; margin-bottom: 654px; top: 0px;"><div id="svg-container"><div id="SVGiewer1" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
             
 <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="page1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; " xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250819011714902" class="svg-pan-zoom_viewport" transform="matrix(0.6586901763224181,0,0,0.6586901763224181,63.14546599496225,0)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, 0);">
-    <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
+    <rect fill="#0b050b" height="794" width="1123" x="0" y="0"></rect>
 </g></svg>
 
             <button style="position: absolute; bottom: 10px; right: 10px;background: transparent; border: 0;">
@@ -732,7 +652,7 @@ html_content_default = """
             </script>
             </div><div id="SVGiewer2" class="SVG-viewer" style="width: 100%; height: 523.2px; position: relative;">
             <svg width="1122" height="793" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="page2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; " xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250819011714902" class="svg-pan-zoom_viewport" transform="matrix(0.6586901763224181,0,0,0.6586901763224181,63.14546599496225,0)" style="transform: matrix(0.65869, 0, 0, 0.65869, 63.1455, 0);">
-    <rect fill="#0b050b" height="794" stroke="#808080" width="1123" x="0" y="0"></rect>
+    <rect fill="#0b050b" height="794" width="1123" x="0" y="0"></rect>
 </g></svg>
             <button style="position: absolute; bottom: 10px; right: 10px;background: transparent; border: 0;">
                 <svg id="zoom-in2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="background: black; border-radius: 50%;"><path fill="#fff" d="M4.929 4.929A10 10 0 1 1 19.07 19.07A10 10 0 0 1 4.93 4.93zM13 9a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2h-2z"></path></svg>

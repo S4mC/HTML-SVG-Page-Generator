@@ -1,15 +1,25 @@
 import webview
-import os, sys
-import time
-import json
+import os
+import sys
 
 from SVGEditAPI import SVGEditAPI
 
-# Todo: Allow export button
-# Todo: Add the name of the file open for default if exist in save, Review: added save with pywebview api..
-
 # Construir la ruta al archivo HTML relativa al script
-html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "html", "editor", "svg-editor.html")
+def get_html_path():
+    # Carpeta donde está el ejecutable o script
+    if getattr(sys, 'frozen', False):
+        # Si no existe, buscar en Program Data
+        cache_dir = os.environ.get("CACHE_DIR")
+        program_data_html = os.path.join(cache_dir, "HTML-SVG-Page-Generator", "Cache", "html", "editor", "svg-editor.html")
+        return program_data_html
+    else:
+        # Script en desarrollo
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        # Primero buscar en la carpeta actual
+        local_html = os.path.join(app_dir, "html", "editor", "svg-editor.html")
+        return local_html
+
+html_path = get_html_path()
 
 class SVGEditor():
     def __init__(self, svgToEdit=None, private_mode=False, callback_funct=None, start_main=True):

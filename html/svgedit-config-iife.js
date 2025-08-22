@@ -18706,7 +18706,9 @@
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              outputType = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : isChrome() ? 'save' : undefined;
+              outputType = _args3.length > 1 && _args3[1] !== undefined 
+                            ? _args3[1] 
+                            : isChrome() ? 'save' : undefined;
 
               if (window.jsPDF) {
                 _context3.next = 7;
@@ -18714,57 +18716,74 @@
               }
 
               _context3.next = 4;
-              return regeneratorRuntime.awrap(importScript([// We do not currently have these paths configurable as they are
-              //   currently global-only, so not Rolled-up
-              'jspdf/underscore-min.js', 'jspdf/jspdf.min.js']));
+              return regeneratorRuntime.awrap(importScript([
+                'jspdf/underscore-min.js',
+                'jspdf/jspdf.min.js'
+              ]));
 
             case 4:
-              modularVersion = !('svgEditor' in window) || !window.svgEditor || window.svgEditor.modules !== false; // Todo: Switch to `import()` when widely supported and available (also allow customization of path)
-
+              modularVersion = !('svgEditor' in window) || !window.svgEditor || window.svgEditor.modules !== false;
               _context3.next = 7;
-              return regeneratorRuntime.awrap(importScript(curConfig.jspdfPath + 'jspdf.plugin.svgToPdf.js', {
-                type: modularVersion ? 'module' : 'text/javascript'
-              }));
+              return regeneratorRuntime.awrap(importScript(
+                curConfig.jspdfPath + 'jspdf.plugin.svgToPdf.js',
+                { type: modularVersion ? 'module' : 'text/javascript' }
+              ));
 
             case 7:
               res = getResolution();
               orientation = res.w > res.h ? 'landscape' : 'portrait';
-              unit = 'pt'; // curConfig.baseUnit; // We could use baseUnit, but that is presumably not intended for export purposes
-              // Todo: Give options to use predefined jsPDF formats like "a4", etc. from pull-down (with option to keep customizable)
+              unit = 'pt';
 
               doc = jsPDF({
                 orientation: orientation,
                 unit: unit,
-                format: [res.w, res.h] // , compressPdf: true
-
+                format: [res.w, res.h]
               });
+
               docTitle = getDocumentTitle();
-              doc.setProperties({
-                title: docTitle
-                /* ,
-                subject: '',
-                author: '',
-                keywords: '',
-                creator: '' */
+              doc.setProperties({ title: docTitle });
 
-              });
               _getIssues2 = getIssues(), issues = _getIssues2.issues, issueCodes = _getIssues2.issueCodes;
-              svg = this.svgCanvasToString();
-              doc.addSVG(svg, 0, 0); // doc.output('save'); // Works to open in a new
-              //  window; todo: configure this and other export
-              //  options to optionally work in this manner as
-              //  opposed to opening a new tab
 
-              outputType = outputType || 'dataurlstring';
-              obj = {
-                svg: svg,
-                issues: issues,
-                issueCodes: issueCodes,
-                exportWindowName: exportWindowName,
-                outputType: outputType
-              };
-              obj.output = doc.output(outputType, outputType === 'save' ? exportWindowName || 'svg.pdf' : undefined);
-              call('exportedPDF', obj);
+              svg = this.svgCanvasToString();
+              doc.addSVG(svg, 0, 0);
+
+              // Detectar si estamos en pywebview
+              var isPyWebView = typeof window.pywebview !== "undefined";
+
+              if (isPyWebView) {
+                // Generar salida como dataurlstring (base64)
+                var dataUrl = doc.output('dataurlstring');
+                var base64Data = dataUrl.split(',')[1]; // quitar "data:application/pdf;base64,"
+
+                // Mandar a Python
+                pywebview.api.save_file(base64Data, "pdf");
+
+                obj = {
+                  svg: svg,
+                  issues: issues,
+                  issueCodes: issueCodes,
+                  exportWindowName: exportWindowName,
+                  outputType: 'base64',
+                  output: base64Data
+                };
+              } else {
+                // Flujo normal de navegador
+                outputType = outputType || 'dataurlstring';
+                obj = {
+                  svg: svg,
+                  issues: issues,
+                  issueCodes: issueCodes,
+                  exportWindowName: exportWindowName,
+                  outputType: outputType
+                };
+                obj.output = doc.output(
+                  outputType,
+                  outputType === 'save' ? exportWindowName || 'svg.pdf' : undefined
+                );
+                call('exportedPDF', obj);
+              }
+
               return _context3.abrupt("return", obj);
 
             case 21:
@@ -18774,6 +18793,7 @@
         }
       }, null, this);
     };
+
     /**
     * Returns the current drawing as raw SVG XML text.
     * @function module:svgcanvas.SvgCanvas#getSvgString
@@ -31262,7 +31282,8 @@
       } // Since saving SVGs by opening a new window was removed in Chrome use artificial link-click
       // http://stackoverflow.com/questions/45603201/window-is-not-allowed-to-navigate-top-frame-navigations-to-data-urls
       // Review: added save with pywebview api, this only works in python pywebview
-      pywebview.api.save_as(svg, "draw.svg").then(result => { 
+      let name_save = localStorage.getItem('file_load_name');
+      pywebview.api.save_as(svg, name_save ? name_save : "draw.svg").then(result => { 
           if (result.success) {
               $$b.pref('save_notice_done');
           }
@@ -31308,6 +31329,11 @@
 
 
     var exportHandler = function exportHandler(win, data) {
+      var isPyWebView = typeof window.pywebview !== "undefined";
+      if (isPyWebView){
+        return;
+      }
+      
       var issues = data.issues,
           exportWindowName = data.exportWindowName;
       exportWindow = window.open(blankPageObjectURL || '', exportWindowName); // A hack to get the window via JSON-able name without opening a new one
@@ -34422,6 +34448,7 @@
         while (1) {
           switch (_context11.prev = _context11.next) {
             case 0:
+              // helper para abrir ventana en navegador
               openExportWindow = function _ref15() {
                 var loadingImage = uiStrings$1.notification.loadingImage;
 
@@ -34452,65 +34479,88 @@
                 exportWindow = window.open(popURL, exportWindowName);
               };
 
+              // Mostrar selector de tipo
               _context11.next = 3;
-              return regeneratorRuntime.awrap($$b.select('Select an image type for export: ', [// See http://kangax.github.io/jstests/toDataUrl_mime_type_test/ for a useful list of MIME types and browser support
-              // 'ICO', // Todo: Find a way to preserve transparency in SVG-Edit if not working presently and do full packaging for x-icon; then switch back to position after 'PNG'
-              'PNG', 'JPEG', 'BMP', 'WEBP', 'PDF'], function () {
-                var sel = $$b(this);
-
-                if (sel.val() === 'JPEG' || sel.val() === 'WEBP') {
-                  if (!$$b('#image-slider').length) {
-                    $$b("<div><label>".concat(uiStrings$1.ui.quality, "\n              <input id=\"image-slider\"\n                type=\"range\" min=\"1\" max=\"100\" value=\"92\" />\n            </label></div>")).appendTo(sel.parent());
+              return regeneratorRuntime.awrap(
+                $$b.select(
+                  'Select an image type for export: ',
+                  ['PNG', 'JPEG', 'BMP', 'WEBP', 'PDF'],
+                  function () {
+                    var sel = $$b(this);
+                    if (sel.val() === 'JPEG' || sel.val() === 'WEBP') {
+                      if (!$$b('#image-slider').length) {
+                        $$b("<div><label>".concat(uiStrings$1.ui.quality, "\n              <input id=\"image-slider\"\n                type=\"range\" min=\"1\" max=\"100\" value=\"92\" />\n            </label></div>")).appendTo(sel.parent());
+                      }
+                    } else {
+                      $$b('#image-slider').parent().remove();
+                    }
                   }
-                } else {
-                  $$b('#image-slider').parent().remove();
-                }
-              }));
+                )
+              );
 
             case 3:
               imgType = _context11.sent;
-
               if (imgType) {
                 _context11.next = 6;
                 break;
               }
-
               return _context11.abrupt("return");
 
             case 6:
               chrome = isChrome();
+              var isPyWebView = typeof window.pywebview !== "undefined";
 
               if (!(imgType === 'PDF')) {
-                _context11.next = 12;
+                _context11.next = 14;
                 break;
               }
 
-              if (!customExportPDF && !chrome) {
-                openExportWindow();
+              if (isPyWebView) {
+                // aquí deberías tener una versión que devuelva base64
+                // Todo: no logra exportar bien a pdf
+                svgCanvas.exportPDF(exportWindowName);
+              } else {
+                if (!customExportPDF && !chrome) {
+                  openExportWindow();
+                }
+                svgCanvas.exportPDF(exportWindowName);
               }
-
-              svgCanvas.exportPDF(exportWindowName);
-              _context11.next = 16;
+              _context11.next = 24;
               break;
 
-            case 12:
+            case 14:
+              quality = parseInt($$b('#image-slider').val()) / 100;
+              var isPyWebView = typeof window.pywebview !== "undefined";
+
+              if (!isPyWebView) {
+                _context11.next = 21;
+                break;
+              }
+
+              _context11.next = 18;
+              return regeneratorRuntime.awrap(svgCanvas.rasterExport(imgType, quality));
+
+            case 18:
+              var dataUrl = _context11.sent;
+              var base64Data = dataUrl.datauri.split(",")[1];
+              _context11.next = 24;
+              return regeneratorRuntime.awrap(pywebview.api.save_file(base64Data, imgType.toLowerCase()));
+
+            case 21:
               if (!customExportImage) {
                 openExportWindow();
               }
-
-              quality = parseInt($$b('#image-slider').val()) / 100;
-              /* const results = */
-
-              _context11.next = 16;
+              _context11.next = 24;
               return regeneratorRuntime.awrap(svgCanvas.rasterExport(imgType, quality, exportWindowName));
 
-            case 16:
+            case 24:
             case "end":
               return _context11.stop();
           }
         }
       });
     };
+
     /**
      * By default, svgCanvas.open() is a no-op. It is up to an extension
      *  mechanism (opera widget, etc.) to call `setCustomHandlers()` which
@@ -36778,6 +36828,8 @@
                 if (this.files.length === 1) {
                   // $$b.process_cancel(uiStrings$1.notification.loadingImage); //REVIEW: This line show notification of load image but this sometimes is incorrect
                   reader = new FileReader();
+
+                  localStorage.setItem('file_load_name', this.files[0].name);
 
                   reader.onloadend = function _callee6(_ref18) {
                     var target;

@@ -1,5 +1,4 @@
-# nuitka --msvc=latest --onefile --windows-console-mode=disable --windows-icon-from-ico=icon.ico "main.py"
-# Parece que tengo que configurar algun parametro mas en nuitka para que compile correctamente el svg editor
+# nuitka --msvc=latest --onefile --onefile-cache-mode=cached --windows-console-mode=disable --windows-icon-from-ico=icon.ico --include-data-dir="html=html" --onefile-tempdir-spec="%CACHE_DIR%\HTML-SVG-Page-Generator\Cache" "main.py"
 
 import webview
 import os

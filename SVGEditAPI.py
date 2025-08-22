@@ -1,4 +1,5 @@
 import webview
+import base64
 import os
 
 class SVGEditAPI:
@@ -43,3 +44,27 @@ class SVGEditAPI:
 
         except Exception as e:
             return {"success": False, "error": str(e)}
+    
+    def save_file(self, base64_data, ext):
+        # Decodificar el archivo
+        default_dir = os.getcwd()
+
+        # Crear diálogo para guardar archivo
+        result = webview.windows[0].create_file_dialog(
+            webview.SAVE_DIALOG,
+            directory=default_dir,
+            file_types=(f"Archivos {ext} (*.{ext})", "Todos los archivos (*.*)"),
+        )
+
+        if result:
+            # Asegurar que tenga extensión, si no la tiene añadirla
+            save_path = result[0]
+            if not save_path.lower().endswith("." + ext):
+                save_path += "." + ext
+                
+            data = base64.b64decode(base64_data)
+            
+            with open(save_path, "wb") as f:
+                f.write(data)
+            print(f"Archivo guardado en {save_path}")
+            return save_path
