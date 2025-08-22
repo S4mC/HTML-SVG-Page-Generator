@@ -372,11 +372,11 @@ var_better_html += """</script>
             link.addEventListener("click", function (e) {
                 const href = this.getAttribute("href") || this.getAttribute("xlink:href");
                 
-                // Solo procesar si es un enlace interno (empieza con #)
+                // Only process if it is an internal link (starts with #)
                 if (href && href.startsWith("#")) {
-                    e.preventDefault(); // evita el salto instantáneo
+                    e.preventDefault(); // prevent instant jump
 
-                    const targetId = href.substring(1); // substring quita el "#"
+                    const targetId = href.substring(1); // substring removes the "#"
                     const target = document.getElementById(targetId);
 
                     if (target) {
@@ -597,7 +597,7 @@ html_content_default += """
                 
                 let resizeTimeout;
                 window.addEventListener("resize", function () {
-                    clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+                    clearTimeout(resizeTimeout); // Cancel any previous timeouts
                     resizeTimeout = setTimeout(function () {
                         viewer1 = document.getElementById('SVGiewer1');
                         if (window.zoomContainer1) {
@@ -609,7 +609,7 @@ html_content_default += """
                         });
                         window.zoomContainer1 = svgPanZoom("#page1");
                         center_svg();
-                    }, 280); // 280ms después de que termine
+                    }, 280); // 280ms after it ends
                 });
                 
                 proper_height();
@@ -700,7 +700,7 @@ html_content_default += """
                 
                 let resizeTimeout;
                 window.addEventListener("resize", function () {
-                    clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+                    clearTimeout(resizeTimeout); // Cancel any previous timeouts
                     resizeTimeout = setTimeout(function () {
                         viewer2 = document.getElementById('SVGiewer2');
                         if (window.zoomContainer2) {
@@ -712,7 +712,7 @@ html_content_default += """
                         });
                         window.zoomContainer2 = svgPanZoom("#page2");
                         center_svg();
-                    }, 280); // 280ms después de que termine
+                    }, 280); // 280ms after it ends
                 });
                 
                 proper_height();
@@ -753,7 +753,7 @@ html_content_default += """
                 center_svg();
             });
             </script>
-            </div></div></div><div id="navBar" style="top: 0px;"><div id="nav-thumbs"><div class="nav-thumb" data-original-index="1" draggable="true"><div><span class="number"><span class="pagenum">1</span></span><a href="#page1" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC80lEQVR4AeySQWrEMBAETb6y5As57P/vYf+y92SzYHQRgkhySzNdIWaNjTXT1fVx/7r/cMFgtgMfx+vv8f04uGAwy4Hn83m8xXq5xT8EphJArKk4OewkgFgnCX6nEkCsqTg57CSAWCeJ7L/ifIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwy8jMt9h1i5+12WDrGWoc89GLFy97ssHWItQ597MGLl7ndZOsRahj73YMQq/XI3kQBiTYTJUYUAYhUW3E0kgFgTYXJUIYBYhQV3Ewkg1kSYHFUIIFZhwd1EAluLNTEnR4kJIJYYuMs4xHJpWpwTscTAXcYhlkvT4pyIJQbuMg6xXJoW5/yfWOLlGBeXAGLF7W7rzRFr63riLodYcbvbenPE2rqeuMshVtzutt4csbauZ9lyw4MRaxghB9QIIFaNCs+GCSDWMEIOqBFArBoVng0TQKxhhBxQI4BYNSo8GyaAWMMINQdEm4JY0RoLsi9iBSkq2pqIFa2xIPsiVpCioq2JWNEaC7IvYgUpKtqaiNXbGN81CSBWEw8vewkgVi85vmsSQKwmHl72EkCsXnJ81ySAWE08vOwlgFi95PiuSSCRWM2cvBQTQCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtznmlWOIojNuJAGLt1EaiXRArUZk7RUGsndpItAtiJSpzpyiItVMbiXZBrERlLotSGYxYFSg8GieAWOMMOaFCALEqUHg0TgCxxhlyQoUAYlWg8GicAGKNM+SECgHEqkCJ/2h9AsRa30HKDRArZa3rQyHW+g5SboBYKWtdHwqx1neQcgPESlnr+lCIpenAbgpi2VWuCYxYGs52UxDLrnJNYMTScLabglh2lWsCI5aGs90UW7HsmhYHRiwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtzrmPWOLgjLuWAGJdy9f2dMSyrf7a4G+xbp+3gwsGsxz4U/YXAAD//wSH6KcAAAAGSURBVAMAvfykBV+l+v8AAAAASUVORK5CYII=" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer; position: relative;">page1</p></div><div class="nav-thumb selected" data-original-index="2"><div><span class="number"><span class="pagenum">2</span></span><a href="#page2" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC+ElEQVR4AeySQYrDMBAETT4U9rKHQP5/XPKePewmOVgXIYgltzTTFQgIG2umq+tyv91/b9+3P/4wGOXAy6nL9vw9fh4bfxiMcuCp1PYW63XgD4GRBBBrJE3u2gkg1o6Cw0gCiDWSJnftBBBrR5H8II6HWGLgLuMQy6VpcU7EEgN3GYdYLk2LcyKWGLjLOMRyaVqcE7HEwMu43CfEyt3vtHSINQ197sGIlbvfaekQaxr63IMRK3e/09Ih1jT0uQcjVumX00ACiDUQJlcVAohVWHAaSACxBsLkqkIAsQoLTgMJINZAmFxVCCBWYcFpIIGlxRqYk6vEBBBLDNxlHGK5NC3OiVhi4C7jEMulaXFOxBIDdxmHWC5Ni3N+JpZ4OcbFJYBYcbtbenPEWrqeuMshVtzult4csZauJ+5yiBW3u6U3R6yl65m2XPdgxOpGyAU1AohVo8KzbgKI1Y2QC2oEEKtGhWfdBBCrGyEX1AggVo0Kz7oJIFY3Qs0F0aYgVrTGguyLWEGKirYmYkVrLMi+iBWkqGhrIla0xoLsi1hBioq2JmIdbYzvmgQQq4mHl0cJINZRcnzXJIBYTTy8PEoAsY6S47smAcRq4uHlUQKIdZQc3zUJJBKrmZOXYgKIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU5zxRLHIVxKxFArJXaSLQLYiUqc6UoiLVSG4l2QaxEZa4UBbFWaiPRLoiVqMxpUSqDEasChUf9BBCrnyE3VAggVgUKj/oJIFY/Q26oEECsChQe9RNArH6G3FAhgFgVKPEfzU+AWPM7SLkBYqWsdX4oxJrfQcoNECtlrfNDIdb8DlJugFgpa50fCrE0HdhNQSy7yjWBEUvD2W4KYtlVrgmMWBrOdlMQy65yTWDE0nC2m2Irll3T4sCIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU51xFLHJxx5xJArHP52t6OWLbVnxv8Ldb167rxh8EoB17K/gMAAP//Lom99gAAAAZJREFUAwCBBrYFJf87MwAAAABJRU5ErkJggg==" draggable="false"></a></div><p title="Doble clic para editar" style="cursor: pointer;">page2</p></div></div></div></div><script>
+            </div></div></div><div id="navBar" style="top: 0px;"><div id="nav-thumbs"><div class="nav-thumb" data-original-index="1" draggable="true"><div><span class="number"><span class="pagenum">1</span></span><a href="#page1" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC80lEQVR4AeySQWrEMBAETb6y5As57P/vYf+y92SzYHQRgkhySzNdIWaNjTXT1fVx/7r/cMFgtgMfx+vv8f04uGAwy4Hn83m8xXq5xT8EphJArKk4OewkgFgnCX6nEkCsqTg57CSAWCeJ7L/ifIglBu4yDrFcmhbnRCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwy8jMt9h1i5+12WDrGWoc89GLFy97ssHWItQ597MGLl7ndZOsRahj73YMQq/XI3kQBiTYTJUYUAYhUW3E0kgFgTYXJUIYBYhQV3Ewkg1kSYHFUIIFZhwd1EAluLNTEnR4kJIJYYuMs4xHJpWpwTscTAXcYhlkvT4pyIJQbuMg6xXJoW5/yfWOLlGBeXAGLF7W7rzRFr63riLodYcbvbenPE2rqeuMshVtzutt4csbauZ9lyw4MRaxghB9QIIFaNCs+GCSDWMEIOqBFArBoVng0TQKxhhBxQI4BYNSo8GyaAWMMINQdEm4JY0RoLsi9iBSkq2pqIFa2xIPsiVpCioq2JWNEaC7IvYgUpKtqaiNXbGN81CSBWEw8vewkgVi85vmsSQKwmHl72EkCsXnJ81ySAWE08vOwlgFi95PiuSSCRWM2cvBQTQCwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtznmlWOIojNuJAGLt1EaiXRArUZk7RUGsndpItAtiJSpzpyiItVMbiXZBrERlLotSGYxYFSg8GieAWOMMOaFCALEqUHg0TgCxxhlyQoUAYlWg8GicAGKNM+SECgHEqkCJ/2h9AsRa30HKDRArZa3rQyHW+g5SboBYKWtdHwqx1neQcgPESlnr+lCIpenAbgpi2VWuCYxYGs52UxDLrnJNYMTScLabglh2lWsCI5aGs90UW7HsmhYHRiwxcJdxiOXStDgnYomBu4xDLJemxTkRSwzcZRxiuTQtzrmPWOLgjLuWAGJdy9f2dMSyrf7a4G+xbp+3gwsGsxz4U/YXAAD//wSH6KcAAAAGSURBVAMAvfykBV+l+v8AAAAASUVORK5CYII=" draggable="false"></a></div><p title="Double click to edit" style="cursor: pointer; position: relative;">page1</p></div><div class="nav-thumb selected" data-original-index="2"><div><span class="number"><span class="pagenum">2</span></span><a href="#page2" draggable="false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqCAYAAABeUaiAAAAC+ElEQVR4AeySQYrDMBAETT4U9rKHQP5/XPKePewmOVgXIYgltzTTFQgIG2umq+tyv91/b9+3P/4wGOXAy6nL9vw9fh4bfxiMcuCp1PYW63XgD4GRBBBrJE3u2gkg1o6Cw0gCiDWSJnftBBBrR5H8II6HWGLgLuMQy6VpcU7EEgN3GYdYLk2LcyKWGLjLOMRyaVqcE7HEwMu43CfEyt3vtHSINQ197sGIlbvfaekQaxr63IMRK3e/09Ih1jT0uQcjVumX00ACiDUQJlcVAohVWHAaSACxBsLkqkIAsQoLTgMJINZAmFxVCCBWYcFpIIGlxRqYk6vEBBBLDNxlHGK5NC3OiVhi4C7jEMulaXFOxBIDdxmHWC5Ni3N+JpZ4OcbFJYBYcbtbenPEWrqeuMshVtzult4csZauJ+5yiBW3u6U3R6yl65m2XPdgxOpGyAU1AohVo8KzbgKI1Y2QC2oEEKtGhWfdBBCrGyEX1AggVo0Kz7oJIFY3Qs0F0aYgVrTGguyLWEGKirYmYkVrLMi+iBWkqGhrIla0xoLsi1hBioq2JmIdbYzvmgQQq4mHl0cJINZRcnzXJIBYTTy8PEoAsY6S47smAcRq4uHlUQKIdZQc3zUJJBKrmZOXYgKIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU5zxRLHIVxKxFArJXaSLQLYiUqc6UoiLVSG4l2QaxEZa4UBbFWaiPRLoiVqMxpUSqDEasChUf9BBCrnyE3VAggVgUKj/oJIFY/Q26oEECsChQe9RNArH6G3FAhgFgVKPEfzU+AWPM7SLkBYqWsdX4oxJrfQcoNECtlrfNDIdb8DlJugFgpa50fCrE0HdhNQSy7yjWBEUvD2W4KYtlVrgmMWBrOdlMQy65yTWDE0nC2m2Irll3T4sCIJQbuMg6xXJoW50QsMXCXcYjl0rQ4J2KJgbuMQyyXpsU51xFLHJxx5xJArHP52t6OWLbVnxv8Ldb167rxh8EoB17K/gMAAP//Lom99gAAAAZJREFUAwCBBrYFJf87MwAAAABJRU5ErkJggg==" draggable="false"></a></div><p title="Double click to edit" style="cursor: pointer;">page2</p></div></div></div></div><script>
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw((a.code="MODULE_NOT_FOUND"),a)}
 var p=(n[i]={exports:{}});e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}
 return n[i].exports}
@@ -863,14 +863,14 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
         let resizeTimeout;
         let resizeTimeoutLate;
         window.addEventListener("resize", function () {{
-            clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+            clearTimeout(resizeTimeout); // Cancel any previous timeouts
             clearTimeout(resizeTimeoutLate);
             resizeTimeout = setTimeout(function () {{
                 RunAtStartup();
-            }}, 250); // 250ms después de que termine
+            }}, 250); // 250ms after it ends
             resizeTimeoutLate = setTimeout(function () {{
                 RunAtStartup();
-            }}, 350); // 350ms después de que termine
+            }}, 350); // 350ms after it ends
         }});
         
         window.onscroll = renavstyle;
@@ -1005,9 +1005,9 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
                 }
             }
             document.querySelector("#nav-thumbs .selected")?.scrollIntoView({
-                behavior: "smooth", // opcional: animado
-                block: "center", // centra verticalmente
-                inline: "center", // centra horizontalmente
+                behavior: "smooth", // optional: animated scroll
+                block: "center", // center vertically
+                inline: "center", // center horizontally
             });
         }
         var navs = document.querySelectorAll(".nav-thumb");
@@ -1023,12 +1023,12 @@ if(timeout===null){return(window.requestAnimationFrame||requestTimeout(33))}else
         document.querySelectorAll("a").forEach((link) => {
             link.addEventListener("click", function (e) {
                 const href = this.getAttribute("href") || this.getAttribute("xlink:href");
-                
-                // Solo procesar si es un enlace interno (empieza con #)
-                if (href && href.startsWith("#")) {
-                    e.preventDefault(); // evita el salto instantáneo
 
-                    const targetId = href.substring(1); // substring quita el "#"
+                // Only process if it's an internal link (starts with #)
+                if (href && href.startsWith("#")) {
+                    e.preventDefault(); // prevent instant jump
+
+                    const targetId = href.substring(1); // substring removes the "#"
                     const target = document.getElementById(targetId);
 
                     if (target) {
@@ -1095,40 +1095,40 @@ function limpiarAtributosDuplicados(svgString) {
     return svgEl.outerHTML;
 }
 
-// Función para hacer elementos editables con doble clic
+// Function to make elements editable with double click
 function makeElementsEditable() {
-    // Seleccionar todos los elementos que coincidan con el patrón
+    // Select all elements that match the pattern
     const elements = document.querySelectorAll("#nav-thumbs > div > p");
     
     elements.forEach(element => {
-        // Agregar event listener para doble clic
+        // Add event listener for double click
         element.addEventListener('dblclick', function(e) {
             e.preventDefault();
             startEditing(this);
         });
-        
-        // Opcional: agregar cursor pointer para indicar que es editable
+
+        // Optional: add pointer cursor to indicate it's editable
         element.style.cursor = 'pointer';
-        element.title = 'Doble clic para editar';
+        element.title = 'Double click to edit';
     });
 }
 
 function startEditing(element) {
-    // Verificar si ya está siendo editado
+    // Check if it's already being edited
     if (element.querySelector('.edit-input')) {
         return;
     }
-    
-    // Obtener el texto actual
+
+    // Get the current text
     const currentText = element.textContent;
-    
-    // Crear el input de edición
+
+    // Create the editing input
     const input = document.createElement('input');
     input.type = 'text';
     input.value = currentText;
     input.className = 'edit-input';
-    
-    // Estilos para el input
+
+    // Styles for the input
     input.style.cssText = `
         width: 100%;
         padding: 2px 4px;
@@ -1139,21 +1139,21 @@ function startEditing(element) {
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         outline: none;
     `;
-    
-    // Ocultar el texto original temporalmente
+
+    // Hide the original text temporarily
     const originalDisplay = element.style.display;
     element.style.position = 'relative';
     
-    // Guardar el contenido original y limpiarlo
+    // Save the original content and clean it
     const originalContent = element.innerHTML;
     element.innerHTML = '';
     element.appendChild(input);
-    
-    // Enfocar y seleccionar todo el texto
+
+    // Focus and select all text
     input.focus();
     input.select();
-    
-    // Función para confirmar los cambios
+
+    // Function to confirm changes
     function confirmEdit() {
         const newText = input.value.trim();
         element.innerHTML = originalContent;
@@ -1165,14 +1165,14 @@ function startEditing(element) {
         // Save the changues
         pywebview.api.update_html_content();
     }
-    
-    // Función para cancelar los cambios
+
+    // Function to cancel changes
     function cancelEdit() {
         element.innerHTML = originalContent;
         element.style.display = originalDisplay;
     }
-    
-    // Event listeners para el input
+
+    // Event listeners for the input
     input.addEventListener('keydown', function(e) {
         e.stopPropagation();
         
@@ -1184,24 +1184,24 @@ function startEditing(element) {
             cancelEdit();
         }
     });
-    
-    // Confirmar al perder el foco (opcional)
+
+    // Confirm on blur (optional)
     input.addEventListener('blur', function(e) {
-        // Pequeño delay para permitir que otros eventos se procesen primero
+        // Small delay to allow other events to process first
         setTimeout(() => {
             if (element.querySelector('.edit-input')) {
                 confirmEdit();
             }
         }, 100);
     });
-    
-    // Prevenir que el clic en el input active otros eventos
+
+    // Prevent clicks on the input from triggering other events
     input.addEventListener('click', function(e) {
         e.stopPropagation();
     });
 }
 
-// Funciones que permiten cambiar orden de los SVG
+// Functions that allow changing the order of the SVG
 let draggedElementNavThumb = null;
 let originalOrderNavThumb = [];
 
@@ -1209,27 +1209,27 @@ function initDragRepositionNavThumb() {
     const container = document.getElementById('nav-thumbs');
     if (!container) return;
 
-    // Inicializar índices automáticamente
+    // Initialize indices automatically
     initializeOriginalIndices();
     
-    // Guardar orden inicial
+    // Save initial order
     saveOriginalOrderNavThumb();
 
     container.addEventListener('mousedown', (e) => {
-        // Buscar el elemento nav-thumb más cercano hacia arriba
+        // Find the closest nav-thumb element upwards
         const navThumbElement = e.target.closest('.nav-thumb');
         if (navThumbElement) {
-            // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+            // RESET: Reassign the original indexes so that the new order is [1,2,3...]
             resetOriginalIndices();
-            // Actualizar el orden original para futuras comparaciones
+            // Update the original order for future comparisons
             originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
-            // Activar draggable solo al presionar mouse
+            // Activate draggable only when mouse is pressed
             navThumbElement.draggable = true;
         }
     });
 
     container.addEventListener('dragstart', (e) => {
-        // Buscar el elemento nav-thumb más cercano hacia arriba
+        // Find the closest nav-thumb element upwards
         const navThumbElement = e.target.closest('.nav-thumb');
         if (navThumbElement) {
             draggedElementNavThumb = navThumbElement;
@@ -1238,11 +1238,11 @@ function initDragRepositionNavThumb() {
     });
 
     container.addEventListener('dragend', (e) => {
-        // Buscar el elemento nav-thumb más cercano hacia arriba
+        // Find the closest nav-thumb element upwards
         const navThumbElement = e.target.closest('.nav-thumb');
         if (navThumbElement) {
             navThumbElement.classList.remove('dragging');
-            // Desactivar draggable al terminar
+            // Deactivate draggable when finished
             navThumbElement.removeAttribute("draggable");
             checkPositionChangeNavThumb();
             draggedElementNavThumb = null;
@@ -1263,7 +1263,7 @@ function initDragRepositionNavThumb() {
 
 function saveOriginalOrderNavThumb() {
     const container = document.getElementById('nav-thumbs');
-    // Crear orden secuencial [1, 2, 3, 4, 5...]
+    // Create sequential order [1, 2, 3, 4, 5...]
     originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
 }
 
@@ -1284,8 +1284,8 @@ function getDragAfterElementNavThumb(container, y) {
 
 function checkPositionChangeNavThumb() {
     const container = document.getElementById('nav-thumbs');
-    
-    // Crear array numérico basado en los data-original-index de los elementos en su orden actual
+
+    // Create numeric array based on the data-original-index of the elements in their current order
     const currentOrder = Array.from(container.children).map(child => {
         return parseInt(child.dataset.originalIndex);
     });
@@ -1293,17 +1293,17 @@ function checkPositionChangeNavThumb() {
     const hasChanged = !arraysEqual(originalOrderNavThumb, currentOrder);
     
     if (hasChanged) {
-        console.log('Reposicionamiento completado - Posición cambiada:', {
-            ordenAnterior: originalOrderNavThumb,
-            ordenActual: currentOrder
+        console.log('Repositioning completed - Position changed:', {
+            PreviousOrder: originalOrderNavThumb,
+            CurrentOrder: currentOrder
         });
         
-        // REINICIAR: Reasignar los índices originales para que el nuevo orden sea [1,2,3...]
+        // RESET: Reassign the original indexes so that the new order is [1,2,3...]
         resetOriginalIndices();
-        // Actualizar el orden original para futuras comparaciones
+        // Update the original order for future comparisons
         originalOrderNavThumb = Array.from(container.children).map((child, index) => index + 1);
-        
-        // Enviar nuevo orden a la API
+
+        // Send new order to the API
         let indexNavThumb = Array.from(draggedElementNavThumb.parentNode.children).indexOf(draggedElementNavThumb);
         pywebview.api.reorder_SVGs(currentOrder, indexNavThumb + 1);
     }
@@ -1317,7 +1317,7 @@ function arraysEqual(a, b) {
     return true;
 }
 
-// Función auxiliar para inicializar los índices originales en los elementos
+// Function to initialize the original indexes on the elements
 function initializeOriginalIndices() {
     const container = document.getElementById('nav-thumbs');
     if (!container) return;
@@ -1327,12 +1327,12 @@ function initializeOriginalIndices() {
     });
 }
 
-// Función para reiniciar los índices después de un cambio
+// Function to reset the indexes after a change
 function resetOriginalIndices() {
     const container = document.getElementById('nav-thumbs');
     if (!container) return;
     
-    // Reasignar los índices basándose en el orden actual
+    // Reassign indexes based on the current order
     Array.from(container.children).forEach((child, index) => {
         child.dataset.originalIndex = index + 1;
     });
@@ -1342,10 +1342,10 @@ function resetOriginalIndices() {
 function handleRightClickPreview(event) {
     event.preventDefault();
 
-    // Eliminar cualquier menú anterior
+    // Remove any previous menu
     document.querySelectorAll(".context-menu-temp").forEach(menu => menu.remove());
 
-    // Crear estilos desde JS
+    // Create styles from JS
     const style = document.createElement("style");
     style.textContent = `
         .context-menu-temp {
@@ -1369,7 +1369,7 @@ function handleRightClickPreview(event) {
     `;
     document.head.appendChild(style);
 
-    // Crear el contenedor del menú
+    // Create menu container
     const menu = document.createElement("div");
     menu.className = "context-menu-temp";
 
@@ -1377,10 +1377,10 @@ function handleRightClickPreview(event) {
     const hrline = document.createElement("hr");
     hrline.style.margin = "0px";
     hrline.style.borderColor= "#000";
-    
-    // Crear opciones
+
+    // Create options
     const option1 = document.createElement("div");
-    option1.textContent = "Editar";
+    option1.textContent = "Edit";
     option1.onclick = () => {
         menu.remove();
         style.remove();
@@ -1389,7 +1389,7 @@ function handleRightClickPreview(event) {
     };
 
     const option2 = document.createElement("div");
-    option2.textContent = "Añadir svg arriba";
+    option2.textContent = "Add SVG Above";
     option2.onclick = () => {
         menu.remove();
         style.remove();
@@ -1398,7 +1398,7 @@ function handleRightClickPreview(event) {
     };
     
     const option3 = document.createElement("div");
-    option3.textContent = "Añadir svg abajo";
+    option3.textContent = "Add SVG Below";
     option3.onclick = () => {
         menu.remove();
         style.remove();
@@ -1407,19 +1407,19 @@ function handleRightClickPreview(event) {
     };
     
     const option4 = document.createElement("div");
-    option4.textContent = "Eliminar";
+    option4.textContent = "Delete";
     option4.onclick = () => {
         menu.remove();
         style.remove();
-        
-        if (confirm("¿Estás seguro de que deseas eliminar esta página?")) {
+
+        if (confirm("Are you sure you want to delete this page?")) {
             // Si el usuario hace clic en "Aceptar", llama a la función de Python
             pywebview.api.delete_this_SVG(this.id);
         }
     };
     
     const option5 = document.createElement("div");
-    option5.textContent = "Actualizar icono";
+    option5.textContent = "Update Icon";
     option5.onclick = () => {
         menu.remove();
         style.remove();
@@ -1434,7 +1434,7 @@ function handleRightClickPreview(event) {
     };
     
     const option6 = document.createElement("div");
-    option6.textContent = "Añadir página vacia arriba";
+    option6.textContent = "Add Empty Page Above";
     option6.onclick = () => {
         menu.remove();
         style.remove();
@@ -1443,7 +1443,7 @@ function handleRightClickPreview(event) {
     };
     
     const option7 = document.createElement("div");
-    option7.textContent = "Añadir página vacia abajo";
+    option7.textContent = "Add Empty Page Below";
     option7.onclick = () => {
         menu.remove();
         style.remove();
@@ -1463,13 +1463,13 @@ function handleRightClickPreview(event) {
     menu.appendChild(option6);
     menu.appendChild(option7);
 
-    // Posicionar menú
+    // Position menu
     menu.style.left = `${event.pageX}px`;
     menu.style.top = `${event.pageY}px`;
 
     document.body.appendChild(menu);
 
-    // Cerrar si se hace clic fuera o se presiona Escape
+    // Close if clicked outside or Escape is pressed
     const closeMenu = () => {
         menu.remove();
         style.remove();
@@ -1501,7 +1501,7 @@ function setupPageElementsPreview() {
         const element = document.getElementById(elementId);
         
         if (element) {
-            // Asignar el evento de clic derecho
+            // Assign right-click event
             element.addEventListener('contextmenu', handleRightClickPreview);
             pageNumber++;
         } else {
@@ -1536,22 +1536,22 @@ window.runScripts = function(containerElement) {
     scripts.forEach(oldScript => {
         const newScript = document.createElement("script");
         
-        // Copiar el contenido inline
+        // Copy the content inline
         if (oldScript.textContent) {
             newScript.textContent = oldScript.textContent;
         }
-        
-        // Copiar atributos (src, type, etc.)
+
+        // Copy attributes (src, type, etc.)
         for (let attr of oldScript.attributes) {
             newScript.setAttribute(attr.name, attr.value);
         }
-        
-        // Reemplazar el viejo <script> por el nuevo ejecutable
+
+        // Replace the old <script> with the new executable one
         oldScript.parentNode.replaceChild(newScript, oldScript);
     });
 }
 
-// Inicializar cuando el DOM esté listo
+// Initialize when the DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', makeElementsEditable);
     document.addEventListener('DOMContentLoaded', setupPageElementsPreview);
@@ -1640,8 +1640,8 @@ html_interface = """
     <div class="container">
             
         <div class="section">
-            <button onclick="openFile()">Abrir archivo HTML</button>
-            <span id="currentFile" class="filename">Sin archivo</span>
+            <button onclick="openFile()">Open HTML file</button>
+            <span id="currentFile" class="filename">No file</span>
         </div>
         
         <div class="section">
@@ -1649,13 +1649,13 @@ html_interface = """
         </div>
         
         <div class="section">
-            <button onclick="saveAs()">Guardar como</button>
+            <button onclick="saveAs()">Save as</button>
         </div>
         
         <div id="status"></div>
         
         <div class="section">
-            <span style="font-family: monospace;">Contenido actual:</span>
+            <span style="font-family: monospace;">Current content:</span>
             <textarea id="contentArea" readonly></textarea>
         </div>
     </div>
@@ -1685,7 +1685,7 @@ html_interface = """
                     pywebview.api.do_better_html().then(result => {
                         if (result.success) {
                             updateContent(result.content, document.getElementById('currentFile').textContent);
-                            showStatus('Archivo cargado correctamente');
+                            showStatus('File loaded successfully');
                         } else {
                             showStatus(result.error, true);
                         }
@@ -1719,7 +1719,7 @@ html_interface = """
             });
         }
 
-        // Cargar contenido actual al iniciar, pywebviewready se activa cuando se cargo el DOM y la api de pywebview
+        // Load current content on startup, pywebview ready fires when the DOM and pywebview api are loaded
         window.addEventListener('pywebviewready', function () {
             pywebview.api.get_current_content().then(result => {
                 updateContent(result.content, result.filename);

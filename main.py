@@ -33,7 +33,7 @@ class HTMLEditor:
     
     def before_closing_global(self):
         if (not self.saved_changes):
-            result = window.evaluate_js('confirm("This cambios sin guardar, cerrar de todos modos?");')
+            result = window.evaluate_js('confirm("There are unsaved changes, close anyway?");')
             if not result:
                 return False
         if (self.window_edit):
@@ -47,7 +47,7 @@ class HTMLEditor:
         result = webview.windows[0].create_file_dialog(
             webview.OPEN_DIALOG,
             directory=os.getcwd(),
-            file_types=("Archivos HTML (*.html;*.htm)", "Todos los archivos (*.*)"),
+            file_types=("HTML Files (*.html;*.htm)", "All files (*.*)"),
         )
 
         if result and len(result) > 0:
@@ -65,7 +65,7 @@ class HTMLEditor:
             except Exception as e:
                 return {"success": False, "error": str(e)}
 
-        return {"success": False, "error": "No se seleccionó archivo"}
+        return {"success": False, "error": "No file was selected"}
 
     def get_svg_wraper(self, svg_content, i):
         return f"""<div id="SVGiewer{i}" class="SVG-viewer" style="width: 100%; height: 80vh; position: relative;">
@@ -173,7 +173,7 @@ class HTMLEditor:
     
     def do_better_html(self):
         if ('<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"' in self.html_content):
-            print("Ya esta mejorado")
+            print("Already improved")
             return {
                 "success": True,
                 "content": self.html_content,
@@ -189,8 +189,8 @@ class HTMLEditor:
         svg_pattern = r"<svg[^>]*>.*?</svg>"
         matches = list(re.finditer(svg_pattern, self.html_content, re.DOTALL))
 
-        nuevo_texto = ""  # Variable that holds the new content of html_content
-        pos_anterior = 0
+        new_text = ""  # Variable that holds the new content of html_content
+        previous_pos = 0
 
         for i, match in enumerate(matches):
             start = match.start()
@@ -198,17 +198,17 @@ class HTMLEditor:
             svg_content = match.group()
 
             # Add the text before the SVG
-            nuevo_texto += self.html_content[pos_anterior:start]
+            new_text += self.html_content[previous_pos:start]
 
             # Create the wrapper with the SVG and its controls
             wrapper = self.get_svg_wraper(svg_content, i + 1)
 
-            nuevo_texto += wrapper
-            pos_anterior = end
+            new_text += wrapper
+            previous_pos = end
 
         # Add the rest of the text
-        nuevo_texto += self.html_content[pos_anterior:]
-        self.html_content = nuevo_texto
+        new_text += self.html_content[previous_pos:]
+        self.html_content = new_text
 
         self.replace_text(
             "</div></div></div></div><script>", self.var_better_html, to_final=True
@@ -255,7 +255,7 @@ class HTMLEditor:
                 webview.SAVE_DIALOG,
                 directory=default_dir,
                 save_filename=default_filename,
-                file_types=("Archivos HTML (*.html)", "Todos los archivos (*.*)"),
+                file_types=("HTML Files (*.html)", "All files (*.*)"),
             )
 
             if result:
@@ -275,7 +275,7 @@ class HTMLEditor:
                     "path": save_path,
                 }
             else:
-                return {"success": False, "error": "Saved canceled"}
+                return {"success": False, "error": "Save canceled"}
 
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -287,7 +287,7 @@ class HTMLEditor:
             "filename": (
                 os.path.basename(self.current_file)
                 if self.current_file
-                else "Sin archivo"
+                else "No file"
             ),
         }
 
@@ -296,13 +296,13 @@ class HTMLEditor:
         self.html_content = self.window_preview.evaluate_js(
             """
             let saved_html = document.documentElement.cloneNode(true);
-            // Trabajar con el documento clonado, no el original
+            // Work with the cloned document, not the original
             const childNodes = saved_html.querySelector("#svg-container").childNodes;
-            // Iterar sobre cada nodo hijo en el documento clonado
+            // Iterate over each child node in the cloned document
             childNodes.forEach(node => {
-                // Verificar que sea un elemento (no texto o comentario)
+                // Verify that it is an element (not text or comment)
                 if (node.nodeType === Node.ELEMENT_NODE) {
-                    // Cambiar la propiedad height a 80vh en el elemento clonado
+                    // Change the height property to 80vh in the cloned element
                     node.style.height = "80vh";
                 }
             });
@@ -321,19 +321,19 @@ class HTMLEditor:
         
         self.saved_changes = False
 
-    def refresh_svg_icon(self, anchoDeseado = 150):
+    def refresh_svg_icon(self, desiredWidth = 150):
         """Function that updates the preview of the passed SVG icon. window.final_svg_edit must have a copy of the SVG to create the icon preview. Both the SVG with the same ID as the copy and the nav thumb child must exist."""
 
         self.window_preview.evaluate_js(
             f"""
-            const targetWidth = {anchoDeseado};
+            const targetWidth = {desiredWidth};
             const svgElement = window.final_svg_edit;
 
             if (svgElement) {{
                 try {{
                     window.final_svg_edit = null;
                     
-                    // Obtener elemento y calcular dimensiones
+                    // Get element and calculate dimensions
                     const elementID = svgElement.id;
                     const svgElementNew = document.getElementById(elementID);
                     
@@ -579,15 +579,15 @@ class HTMLEditor:
                     const width = svg_item.getAttribute('width') || svg_item.getAttribute('width-o');
                     const height = svg_item.getAttribute('height') || svg_item.getAttribute('height-o');
 
-                    // Calcula los nuevos valores para el viewBox
+                    // Calculate new values for the viewBox
                     const newViewBoxWidth = parseInt(width) + 1;
                     const newViewBoxHeight = parseInt(height) + 1;
 
-                    // Construye la nueva cadena del viewBox
-                    // El viewBox se define como "min-x min-y width height"
+                    // Build the new viewBox string
+                    // The viewBox is defined as "min-x min-y width height"
                     const newViewBox = `0 0 ${{newViewBoxWidth}} ${{newViewBoxHeight}}`;
 
-                    // Asigna el nuevo valor al viewBox
+                    // Assign the new value to viewBox
                     svg_item.setAttribute('viewBox', newViewBox);
                 }}
                 
@@ -644,7 +644,7 @@ class HTMLEditor:
             result = self.window_preview.create_file_dialog(
                 webview.OPEN_DIALOG,
                 directory=os.getcwd(),
-                file_types=("Archivos SVG (*.svg)", "Todos los archivos (*.*)")
+                file_types=("SVG Files (*.svg)", "All files (*.*)")
             )
 
         try:
@@ -686,7 +686,7 @@ class HTMLEditor:
                     icons_dict[str(id_clicked_number_page + 1)] = icons_dict["1"]
 
                 file_name_no_ext = None
-                # Nombre de archivo sin extensión
+                # File name without extension
                 if (not default_page):
                     file_name_no_ext, _ = os.path.splitext(os.path.basename(file_path) )
                 self.set_SVG_pages_dicts(svg_dict, icons_dict, svg_added_id, file_name_no_ext, svg_page_to_go=svg_added_id)
@@ -701,7 +701,7 @@ class HTMLEditor:
 
         page_fin = len(svg_dict)
         if (page_fin == 1):
-            self.window_preview.evaluate_js("alert('Añade otra página para poder eliminar esta');")
+            self.window_preview.evaluate_js("alert('Add another page before you can delete this one');")
             return
         page_act = id_clicked_number_page
 
@@ -731,7 +731,7 @@ class HTMLEditor:
             if self.window_edit:
                 # Do not preview if editing
                 self.window_preview.run_js(
-                    "alert('Termina la edición actual para abrir una nueva preview')"
+                    "alert('Finish the current edit to open a new preview')"
                 )
                 return
             else:
@@ -753,14 +753,14 @@ class HTMLEditor:
                 "svgs[i].removeAttribute('height');svgs[i].setAttribute('height-o', oriHeight);",
             )
 
-        # Carpeta específica para guardar
-        carpeta = os.path.join(os.environ.get("PROGRAMDATA", r"C:\ProgramData"), "HTML-SVG-Page-Generator", "preview")
-        os.makedirs(carpeta, exist_ok=True)
+        # Specific folder to save
+        folder = os.path.join(os.environ.get("PROGRAMDATA", r"C:\ProgramData"), "HTML-SVG-Page-Generator", "preview")
+        os.makedirs(folder, exist_ok=True)
 
-        # Nombre del archivo donde guardarás el contenido
-        html_path = os.path.join(carpeta, "preview.html")
+        # File name where you'll save the content
+        html_path = os.path.join(folder, "preview.html")
 
-        # Guardar el contenido en el archivo
+        # Save content to file
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(svg_editr)
 
@@ -779,7 +779,7 @@ class HTMLEditor:
             if self.window_edit:
                 # Do not close the preview if something is being edited
                 self.window_preview.run_js(
-                    "alert('Termina la edición actual para cerrar la preview')"
+                    "alert('Finish the current edit to close the preview')"
                 )
                 return False
             self.window_preview = None
