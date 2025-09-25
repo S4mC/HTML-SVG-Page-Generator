@@ -86,6 +86,7 @@ class HTMLEditor:
                 
                 let viewer{i} = document.getElementById('SVGiewer{i}');
                 let rectElement = viewer{i}.querySelector('svg>g>rect');
+                let lastWidth = viewer{i}.offsetWidth; // Track the last width
 
                 function proper_height(){{
                     rectElement = viewer{i}.querySelector('svg>g>rect');
@@ -116,19 +117,25 @@ class HTMLEditor:
                 
                 let resizeTimeout;
                 window.addEventListener("resize", function () {{
-                    clearTimeout(resizeTimeout); // Cancela cualquier timeout anterior
+                    clearTimeout(resizeTimeout); // Cancel any previous timeout
                     resizeTimeout = setTimeout(function () {{
                         viewer{i} = document.getElementById('SVGiewer{i}');
-                        if (window.zoomContainer{i}) {{
-                            window.zoomContainer{i}.destroy();
+                        const currentWidth = viewer{i}.offsetWidth;
+                        
+                        // Only execute if the width has changed
+                        if (currentWidth !== lastWidth) {{
+                            if (window.zoomContainer{i}) {{
+                                window.zoomContainer{i}.destroy();
+                            }}
+                            proper_height();
+                            viewer{i}.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {{
+                                viewport.replaceWith(...viewport.childNodes);
+                            }});
+                            window.zoomContainer{i} = svgPanZoom("#page{i}");
+                            center_svg();
+                            lastWidth = currentWidth; // Update the last width
                         }}
-                        proper_height();
-                        viewer{i}.querySelectorAll('.svg-pan-zoom_viewport').forEach(viewport => {{
-                            viewport.replaceWith(...viewport.childNodes);
-                        }});
-                        window.zoomContainer{i} = svgPanZoom("#page{i}");
-                        center_svg();
-                    }}, 280); // 280ms después de que termine
+                    }}, 280); // 280ms after finishing
                 }});
                 
                 proper_height();
